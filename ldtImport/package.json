@@ -1,0 +1,18 @@
+{
+  "name": "ldtimport",
+  "version": "1.0.0",
+  "description": "script for importing ldtfiles to mysql database",
+  "main": "ldtImport.js",
+  "dependencies": {
+    "codepage": "^1.14.0",
+    "knex": "^0.19.4",
+    "mysql": "^2.5.4",
+    "utf8": "^3.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Luther",
+  "license": "ISC"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ldtexport",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ldtExport.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "codepage": "^1.14.0",
+    "knex": "^0.19.4",
+    "utf8": "^3.0.0"
+  }
+}
