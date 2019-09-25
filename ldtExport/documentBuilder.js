@@ -107,6 +107,10 @@ function assembleAndCreate(header, body, footer, fn, zs){
 		Promise.all(promiseArr).then((res)=>{
 			var fileContents = res[0].join('') + res[1].join('') + res[2].join('');
 			switch(zs){
+				case 2:
+					con.log(false, " Proper encoding Missing");
+					encodeName = 'binary';
+					break;
 				case 3:
 					con.log(true," Encoded as latin1")
 					encodeName = 'latin1';
