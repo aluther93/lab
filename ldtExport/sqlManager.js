@@ -66,6 +66,9 @@ function selectAbgerufeneBefunde(eins){
 			.select(knex.fn.now(),'content', 'ldtVersion', 'zeichensatz', 'labornr', 'abgerufenAt','aeDatum')
 			.orderBy('abgerufenAt', 'desc')
 			.then((res)=>{
+				if(res.length == 0){
+					reject(" Es liegen keine abrufbaren Befunde vor.")
+				}
 				erstelleResult(res).then(resolve,reject)
 			},reject);
 	});
