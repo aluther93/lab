@@ -109,13 +109,15 @@ function assembleAndCreate(header, body, footer, fn, zs){
 			switch(zs){
 				case 2:
 					con.log(false, " Proper encoding Missing");
-					encodeName = 'binary';
+					con.log(false," Encoded as utf8")
+					encodeName = 'utf8';
 					break;
 				case 3:
 					con.log(true," Encoded as latin1")
 					encodeName = 'latin1';
 					break;
 				case 4:
+					con.log(false, " Proper encoding Missing");
 					con.log(true," Encoded as latin9")
 					encodeName = 'latin9';
 					break;
@@ -124,7 +126,7 @@ function assembleAndCreate(header, body, footer, fn, zs){
 					encodeName = 'utf8';
 					break;
 			}
-			fs.appendFile(fn, fileContents,encodeName ,(err)=>{
+			fs.appendFile(fn, fileContents,(err)=>{
 				if(!err){
 					resolve();
 				}
