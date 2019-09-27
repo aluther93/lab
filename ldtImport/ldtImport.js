@@ -104,8 +104,8 @@ function mainLoop(anyFlag){
 //Resolve ist TRUE wenn eine Flagge weiteres Lesen einschränken soll
 function verifyAndHandleLine(lineToCheck){
 	return new Promise((resolve,reject)=>{
-		var line = ctt.lineToUtf8(lineToCheck);
-		var lineAlt = ctt.lineToUtf8(lineToCheck, enrolledZeichensatz[0]);
+		var line = ctt.lineToUtf8(lineToCheck, enrolledZeichensatz[0]);
+		var lineAlt = ctt.lineToUtf8(lineToCheck);
 		if(((unreadableHeader || unreadableBody) && !line.includes('8000'))){
 			resolve();
 		}else{
