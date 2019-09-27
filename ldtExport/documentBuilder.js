@@ -99,40 +99,15 @@ function returnFalse(){
 }
 function assembleAndCreate(header, body, footer, fn, zs){
 	return new Promise((resolve,reject)=>{
-		var promiseArr = [];
-		var encodeName = null;
-		promiseArr.push(ctt.parseTextArray(header, zs));
-		promiseArr.push(ctt.parseTextArray(body, zs));
-		promiseArr.push(ctt.parseTextArray(footer, zs));
-		Promise.all(promiseArr).then((res)=>{
-			var fileContents = res[0].join('') + res[1].join('') + res[2].join('');
-			switch(zs){
-				case 2:
-					con.log(false, " Proper encoding Missing");
-					con.log(false," Encoded as utf8")
-					encodeName = 'utf8';
-					break;
-				case 3:
-					con.log(true," Encoded as latin1")
-					encodeName = 'latin1';
-					break;
-				case 4:
-					con.log(false, " Proper encoding Missing");
-					con.log(true," Encoded as latin9")
-					encodeName = 'latin9';
-					break;
-				default:
-					con.log(true," Encoded as utf8")
-					encodeName = 'utf8';
-					break;
-			}
-			fs.appendFile(fn, fileContents,(err)=>{
+		var fullDocString = header.join('') + body.join('') + footer.join('');
+		ctt.parseText(fullDocString, zs).then((buff)=>{
+			fs.writeFile(fn, buff,(err)=>{
 				if(!err){
 					resolve();
 				}
 				reject(">>> ERROR: FILE konnte nicht erstellt werden");
 			});
-		},reject);
+		},reject)
 	});
 }
 function isValidPath(x){
