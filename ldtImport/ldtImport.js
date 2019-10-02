@@ -114,7 +114,7 @@ function verifyAndHandleLine(lineToCheck){
 			line = lineAlt;
 		}
 		if(!ldtHelper.verifyLine(line)){
-
+			console.log("Fehler in Line: "+line)
 			con.log(false,">>ERROR: beschädigtes Dokument! ... in Zeile " + lineNumber);
 			con.log(true, "++ während des Verarbeitungsschritts: " + processState);
 			con.log(true,"++ betroffene Zeile: " + line);
@@ -177,9 +177,9 @@ function switchLineOperation(line){
 				einsenderInfo.newContainer().then(()=>{
 					con.log(false,enrolledQuellkuerzel);
 					postResults(container).then(()=>{
+						container = null;
 						resolve()
 					},reject);
-					container = null;
 					
 					
 				}, (res)=>{
@@ -194,9 +194,9 @@ function switchLineOperation(line){
 				processName = "P-Abschluss";
 				einsenderInfo.newContainer().then(()=>{
 					postResults(container).then((e)=>{
+						container = null;
 						resolve(e)
 					},reject);
-					container = null;
 					
 					
 				}, (res)=>{
@@ -230,7 +230,7 @@ function switchLineOperation(line){
 						break;
 					}
 				}
-				break;
+				//break;
 			//ldtVersion im Header
 			//STATT LINE INCLUDES CHECKSUM(LINE, CODE) HIER!
 			case line.includes('9212'):
@@ -320,7 +320,7 @@ function postResults(container){
 					resolve();
 				},(e)=>{
 					con.log(false, "Container wurde nicht vollständig in die Datenbank überführt.");
-					con.log(true, ">>ERROR: " + e)
+					con.log(false, ">>ERROR: " + e)
 					resolve()
 				})
 			}catch(e){
