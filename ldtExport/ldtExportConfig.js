@@ -1,4 +1,3 @@
-const utf8 = require('utf8');
 module.exports = {
 	sql: {host:'localhost',user:'alex22', password:'donnerdaumen93', database:'labor'},
 	exportPath:"./",

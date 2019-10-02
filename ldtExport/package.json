@@ -9,10 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "codepage": "^1.14.0",
     "knex": "^0.19.4",
     "legacy": "0.0.3",
     "legacy-encoding": "^3.0.0",
-    "utf8": "^3.0.0"
+    "mysql": "^2.17.1"
   }
 }

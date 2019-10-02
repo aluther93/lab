@@ -1,4 +1,3 @@
-const utf8 = require('utf8');
 module.exports = {
 	sql: {host:'localhost',user:'alex22', password:'donnerdaumen93', database:'labor'},
 	sqlTemplate:{quelle:null,eins:null,labornr:null,aeDatum:null,status:'bereit',befArt:null,befTyp:null,orgid:null,vorsatz:null,name:null,zeichensatz:null,vorname:null,gebTag:null,ldtVersion:null,zeit:'GETDATE()',content:null}, 

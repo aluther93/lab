@@ -4,7 +4,6 @@ const sqlManager = require('./sqlManager');
 const einsenderInfo = require('./einsenderInfo');
 const con = require('./consoleLogging');
 var readline = require('readline');
-const utf8 = require('utf8');
 var ctt = require('./codeTableTranslator');
 
 var quellkuerzel;

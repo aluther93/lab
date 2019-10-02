@@ -7,8 +7,7 @@
     "codepage": "^1.14.0",
     "knex": "^0.19.4",
     "legacy-encoding": "^3.0.0",
-    "mysql": "^2.5.4",
-    "utf8": "^3.0.0"
+    "mysql": "^2.5.4"
   },
   "devDependencies": {},
   "scripts": {

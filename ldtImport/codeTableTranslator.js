@@ -3,7 +3,6 @@ module.exports = {
 }
 
 var cptable = require('codepage');
-var utf8 = require('utf8');
 var con = require('./consoleLogging');
 
 //zeichensatz ist entweder false ODER {1,2,3,4}
