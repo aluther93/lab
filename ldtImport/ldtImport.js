@@ -1,4 +1,4 @@
-const ldtConfig = require('./ldtImportConfig');
+
 const ldtHelper = require('./ldtImportHelper');
 const sqlManager = require('./sqlManager');
 const einsenderInfo = require('./einsenderInfo');
@@ -7,7 +7,6 @@ var readline = require('readline');
 var ctt = require('./codeTableTranslator');
 
 var quellkuerzel;
-var reservedCode = ldtConfig.reservedString // 4Byte Kombination die nicht in Ldts auftaucht
 
 var readArray = [];
 var i = 0;
@@ -16,8 +15,8 @@ var processName = 'bereit';
 var processState = "inactive";
 var container = null;
 var ldtVersion;
-var befundSuche = ldtConfig.befundDaten;
-var befundArten = ldtConfig.befundArten;
+var befundSuche = {8311:'labornr',8301:'aeDatum',8401:'befTyp',8310:'orgid',3100:'vorsatz',3101:'name',3102:'vorname',3103:'gebTag'};
+var befundArten = {8201:'Labor-Bericht',8202:'LG-Bericht',8203:'Mikrobiologie-Bericht',8204:'Labor-Bericht-Sonstige',8218:'elektronische-Überweisung',8219:'Auftrag-Laborgemeinschaft'};
 var containerStack = [];
 var lineNumber = 0;
 var unreadableHeader = false;

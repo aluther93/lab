@@ -3,7 +3,6 @@ module.exports = {
 	log:log
 }
 
-const config = require('./ldtImportConfig');
 var verbose = false;
 function setVerbose(){
 	return new Promise((resolve,reject)=>{
@@ -30,9 +29,17 @@ function log(isVerbose, msg, alt){
 		}
 	}else{
 		if(isVerbose && verbose){
-			console.log(config.zeitStempel() +" "+ msg);
+			console.log(zeitStempel() +" "+ msg);
 		}else if(!isVerbose){
-			console.log(config.zeitStempel() +" "+ msg);
+			console.log(zeitStempel() +" "+ msg);
 		}
 	}
+}
+function zeitStempel(){
+	var date = new Date();
+	var timeZoneDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+	var stringFormat = timeZoneDate.toISOString();
+	stringFormat = stringFormat.replace("T", " ");
+	stringFormat = stringFormat.slice(0, 19);
+	return stringFormat;
 }

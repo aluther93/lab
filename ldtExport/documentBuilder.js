@@ -7,7 +7,7 @@ module.exports = {
 	generateFileName:generateFileName,
 	setPath:setPath
 }
-var config = require('./ldtExportConfig');
+var rootconfig = require('../rootconfig');
 let fs = require('fs');
 let con = require('./consoleLogging');
 var ctt = require('./codeTableTranslator');
@@ -89,7 +89,7 @@ function bestimmeBlockLänge(arr){
 function getPath(){
 	return new Promise((resolve,reject)=>{
 		if(path == null){
-			path = config.exportPath;
+			path = rootconfig.exportPath;
 		}
 		isValidPath(path).then(resolve,reject);
 	});

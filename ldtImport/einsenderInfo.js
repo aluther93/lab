@@ -1,4 +1,3 @@
-var config = require('./ldtImportConfig');
 
 module.exports = {
 	hasEinsInfoValue:hasEinsInfoValue,

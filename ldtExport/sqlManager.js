@@ -1,12 +1,8 @@
+let rootconfig = require('../rootconfig')
 var knex = require("knex")({
   client: "mysql",
   debugging:true,
-  connection: {
-    host : 'localhost',
-    user : 'alex22',
-    password : 'donnerdaumen93',
-    database : 'labor'
-  }
+  connection: rootconfig.sql
 });
 module.exports = {
 	markBefundeAsAbgerufen:markBefundeAsAbgerufen,

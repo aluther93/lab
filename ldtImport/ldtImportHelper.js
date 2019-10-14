@@ -1,8 +1,7 @@
-const config = require('./ldtImportConfig');
-const reservedCode = config.reservedString; 
-const sqlTemplate = config.sqlTemplate;
-const options = config.sql;
-const sqlPrimKey = config.sqlPrimKey;
+
+const reservedCode = "XXXX"; 
+const sqlTemplate = {quelle:null,eins:null,labornr:null,aeDatum:null,status:'bereit',befArt:null,befTyp:null,orgid:null,vorsatz:null,name:null,zeichensatz:null,vorname:null,gebTag:null,ldtVersion:null,zeit:'GETDATE()',content:null};
+const sqlPrimKey = {quelle:null,eins:null,labornr:null,aeDatum:null, zeit:null};
 const con = require('./consoleLogging');
 
 module.exports = {
@@ -20,7 +19,13 @@ var totalPaketsRead = 0;
 var unsaveable = 0;
 var users = [];
 
+function parseLineToDate(line){
+	var year = line.substring(4,8);
+	var month = line.substring(2,4);
+	var day = line.substring(0,2);
 
+	return year + month + day;
+}
 // Sammlung an Attributen die der Container aus dem Befund-Corpus übernimmt.
 //ldtVersion, befArt und content fallen nicht unter diese Suche
 // Factory für Container Elemente. Container entsprechen SQL Zeilen die noch nicht eingetragen wurden.
@@ -80,7 +85,7 @@ function shareIdentifier(ident, obj1, obj2){
 } 
 function getParsedValue(code, line){
 	var output = line;
-	var parseRules = config.parseRules;
+	var parseRules = {8301:parseLineToDate, 3103:parseLineToDate};
 	if(parseRules.hasOwnProperty(code)){
 		output = parseRules[code](line);
 	}

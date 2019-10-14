@@ -1,16 +1,11 @@
 const con = require('./consoleLogging');
 let mysql = require('mysql');
-let config = require('./ldtImportConfig');
-let importHelper = require('./ldtImportHelper')
+let importHelper = require('./ldtImportHelper');
+let rootconfig = require('../rootconfig')
 var knex = require("knex")({
   client: "mysql",
   debugging:true,
-  connection: {
-    host : 'localhost',
-    user : 'alex22',
-    password : 'donnerdaumen93',
-    database : 'labor'
-  }
+  connection: rootconfig.sql
 });
 
 
