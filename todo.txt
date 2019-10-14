@@ -1,3 +1,14 @@
+
 ( ) SQL Connection auslagern
-( ) ERROR fix // workload?
-( ) Knex Replace
+( ) Knex Replace/update   (//Query "Insert" durch "Replace" austauschen nachdem der Query String generiert wurde) testen mit neuer ldt mega datei
+( ) 8100 Block speichert Länge --> soll aber neu berechnet werden. (genauso Prüfsumme 3 Byte)
+( ) generateFileName fs.access --> Error-Number ist Versionsabhängig ... nicht immer -4058 // orientierung an Error name enoent
+( ) standard Kopfsignatur des Labors fehlt
+( ) Reihenfolge der Einträge im Header sollen nicht durcheinander geraten
+
+( ) 8201 Zeilen werden verdoppelt // liegt es an dem geänderten Break in SwitchLineOperations?
+( ) Log für fatale Errors -routine nur für  full-rejects
+( ) Zeichensatz in EinsenderTable wird nur einmal initialisiert und danach nurnoch von Admin geändert
+
+( ) BKV Nummer aus EInsender komplett löschen
+( ) externe config Datei enthält außerdem den Labor Signatur Header

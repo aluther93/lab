@@ -188,7 +188,7 @@ function generateFileName(){
 				if(err.errno == -4058){
 					resolve(tempPath);
 				}else{
-					reject();
+					reject(err);
 				}
 			}else{
 				resolve(false);
