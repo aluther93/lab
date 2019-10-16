@@ -1,6 +1,6 @@
 
-( ) SQL Connection auslagern
-( ) Knex Replace/update   (//Query "Insert" durch "Replace" austauschen nachdem der Query String generiert wurde) testen mit neuer ldt mega datei
+(x) SQL Connection auslagern
+(x) Knex Replace/update   (//Query "Insert" durch "Replace" austauschen nachdem der Query String generiert wurde) testen mit neuer ldt mega datei
 ( ) 8100 Block speichert Länge --> soll aber neu berechnet werden. (genauso Prüfsumme 3 Byte)
 ( ) generateFileName fs.access --> Error-Number ist Versionsabhängig ... nicht immer -4058 // orientierung an Error name enoent
 ( ) standard Kopfsignatur des Labors fehlt

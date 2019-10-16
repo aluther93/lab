@@ -4,7 +4,7 @@ let importHelper = require('./ldtImportHelper');
 let rootconfig = require('../rootconfig')
 var knex = require("knex")({
   client: "mysql",
-  debugging:true,
+  debugging:false,
   connection: rootconfig.sql
 });
 
@@ -16,14 +16,18 @@ module.exports = {
 	updateBefunde:updateBefunde
 }
 
-
 function getEinsenderFromDB(quelle, quellkuerzel){
 	return new Promise((resolve,reject)=>{
 		knex('mappings')
 			.where({'quelle': quelle, 'quellkuerzel':quellkuerzel})
 			.pluck('eins')
+			.catch((e)=>{
+				process.exit(e)
+			})
 			.then(rows => {
 				resolve(rows);
+			},(e)=>{
+				reject(e)
 			})
 	});
 }
@@ -103,9 +107,12 @@ function insertBefunde(containerStack){
 				'content':container['content'].join(',')
 			}
 			promiseArray.push(knex('befunde').insert(befundObj).catch((e)=>{
-				importHelper.incUnsaveables();
+				if(e['code'] == 'ER_DUP_ENTRY'){
+					con.log(false, " ACHTUNG: In der gelesenen Datei befinden sich Befunde mit mehrfach vergebenem Identifier. Nur einer der Befunde wird in die Datenbank übernommen.");
+				}else{
+					importHelper.incUnsaveables();
+				}
 				importHelper.decTotalPaketsRead();
-				reject(e);
 			}))
 		}
 		Promise.all(promiseArray).then(resolve,reject)

@@ -26,7 +26,6 @@ var enrolledZeichensatz = [];
 var enrolledQuellkuerzel = [];
 var running = false;
 
-
 var rl = readline.createInterface({
   input: process.stdin.setEncoding('binary'),
   output: process.stdout,
@@ -59,9 +58,6 @@ if(typeof process.argv[3] != 'undefined'){
 process.on('exit', ldtHelper.exitFunction);
 
 rl.on('line', (line)=>{
-	//console.log(line)
-	//console.log(ctt.lineToUtf8(line, 4, false, [4]))
-
 	enrolledInputLine.push(line);
 	findEncoding(line);
 
@@ -96,6 +92,12 @@ function mainLoop(anyFlag){
 		verifyAndHandleLine(line).then(mainLoop, process.exit)
 	}else{
 		running = false;
+		setTimeout(terminateProcess,3000)
+	}
+}
+function terminateProcess(){
+	if(!running){
+		con.log(true,"ACHTUNG: Disconnect from DB!")
 		sqlManager.disconnect();
 	}
 }
@@ -113,7 +115,6 @@ function verifyAndHandleLine(lineToCheck){
 			line = lineAlt;
 		}
 		if(!ldtHelper.verifyLine(line)){
-			console.log("Fehler in Line: "+line)
 			con.log(false,">>ERROR: beschädigtes Dokument! ... in Zeile " + lineNumber);
 			con.log(true, "++ während des Verarbeitungsschritts: " + processState);
 			con.log(true,"++ betroffene Zeile: " + line);
@@ -152,7 +153,7 @@ function switchLineOperation(line){
 	return new Promise((resolve,reject)=>{
 		switch(true){
 
-	    	case line.includes('80008220'):
+	    	case (ldtHelper.checkSum(line, '80008220')==1):
 	    		unreadableHeader = false;
 	    		unreadableBody = false;
 	    		processState = "header";
@@ -161,7 +162,7 @@ function switchLineOperation(line){
 	  			
 
 	    		break;
-			case line.includes('80008230'):
+			case (ldtHelper.checkSum(line, '80008230')==1):
 				unreadableHeader = false;
 				unreadableBody = false;
 				processState = "header";
@@ -170,7 +171,7 @@ function switchLineOperation(line){
 	  			
 					
 				break;
-			case line.includes('80008221'):
+			case (ldtHelper.checkSum(line, '80008221')==1):
 				processState = "footer";
 				processName = "L-Abschluss";
 				einsenderInfo.newContainer().then(()=>{
@@ -188,7 +189,7 @@ function switchLineOperation(line){
 				})
 
 				break; 
-			case line.includes('80008231'):
+			case (ldtHelper.checkSum(line, '80008231')==1):
 				processState = "footer";
 				processName = "P-Abschluss";
 				einsenderInfo.newContainer().then(()=>{
@@ -206,7 +207,7 @@ function switchLineOperation(line){
 
 
 				break;  
-			case line.includes('8000'):
+			case (ldtHelper.checkSum(line, '8000')==1):
 				if(unreadableHeader){
 					ldtHelper.incUnsaveables();
 					resolve();
@@ -214,7 +215,6 @@ function switchLineOperation(line){
 				}
 				for(code in befundArten){
 					if(line.includes(code)){
-
 						if(container != null){
 							containerStack.push(container);
 						}
@@ -232,7 +232,7 @@ function switchLineOperation(line){
 				//break;
 			//ldtVersion im Header
 			//STATT LINE INCLUDES CHECKSUM(LINE, CODE) HIER!
-			case line.includes('9212'):
+			case (ldtHelper.checkSum(line, '9212')==1):
 				if(processState == 'header'){
 					splitLine = line.split('9212');
 					ldtVersion = splitLine[1];
@@ -240,7 +240,7 @@ function switchLineOperation(line){
 					break;
 				}
 			//quellkürzel im Header
-			case line.includes('8312'):
+			case (ldtHelper.checkSum(line, '8312')==1):
 				if(processState == 'header'){
 					splitLine = line.split('8312');
 					quellkuerzel = splitLine[1];

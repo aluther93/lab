@@ -129,7 +129,7 @@ function checkSum(line, code){
 	{
 		process.exit(" >>ERROR: Die Prüfsumme ist keine gültige Zahl.");
 	}
-	if(sum != fieldlength + 9)
+	if(sum != fieldlength + code.length + 5)
 	{
 //Fehlerbehebung falls Schlüssel mehrfach in Zeile vorkommt
 		try
