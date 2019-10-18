@@ -31,6 +31,7 @@ var zwingendErforderlich = {
 };
 var zeichensatzIdent = 0;
 function buildDocHeader(arr){
+	console.log(arr)
 	return new Promise((resolve,reject)=>{
 		var counter = 0;
 		for(i in zwingendErforderlich){
@@ -119,7 +120,8 @@ function recalculateBlockSizeOfBody(body){
 		var calculatedBlockLength = bestimmeBlockLänge(befundeContainer[i])
 		for(var j in befundeContainer[i]){
 			if(checkLineForCode(befundeContainer[i][j], "8100")==1){
-				befundeContainer[i][j] = bestimmeBlockLänge(befundeContainer[i])			
+				befundeContainer[i].splice(j,1);
+				befundeContainer[i].splice(j,0,bestimmeBlockLänge(befundeContainer[i]))		
 			}
 		}
 	}
