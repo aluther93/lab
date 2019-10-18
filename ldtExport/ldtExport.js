@@ -52,7 +52,6 @@ var processChain = [
     sendContainer,
     calculateBlockLength,
     flushStorage,
-    buildFooter,
     findName,
     createFile,
 	updateStatusAbgerufen,
@@ -84,7 +83,7 @@ function mainLoop(args){
 }
 function createFile(){
 	return new Promise((resolve,reject)=>{		
-		docBuilder.assembleAndCreate(header, body, footer, fileName, zeichensatz).then(()=>{
+		docBuilder.assembleAndCreate(header, body, fileName, zeichensatz).then(()=>{
 			con.log(false," FILE wurde erfolgreich ERSTELLT");
 			resolve();
 		}, reject);

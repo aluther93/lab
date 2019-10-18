@@ -214,9 +214,6 @@ function switchLineOperation(line){
 				if(processState == 'header'){
 					splitLine = line.split('9212');
 					ldtVersion = splitLine[1];
-					console.log(ldtVersion)
-					console.log(line)
-					console.log(lineNumber)
 					resolve();
 					break;
 				}

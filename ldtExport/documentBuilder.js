@@ -11,6 +11,7 @@ var rootconfig = require('../rootconfig');
 let fs = require('fs');
 let con = require('./consoleLogging');
 var ctt = require('./codeTableTranslator');
+var ldtHelper = require('./ldtExportHelper')
 
 var finalFileName = null;
 var path = null;
@@ -31,7 +32,6 @@ var zwingendErforderlich = {
 };
 var zeichensatzIdent = 0;
 function buildDocHeader(arr){
-	console.log(arr)
 	return new Promise((resolve,reject)=>{
 		var counter = 0;
 		for(i in zwingendErforderlich){
@@ -87,6 +87,38 @@ function bestimmeBlockLänge(arr){
 
 	return getBytesNeeded(satz2) + satz2 + stop();
 }
+function bestimmeGesamtLänge(header,body,footer){
+	var byteCount = 0;
+	var satz1 = null;
+	var satz2 = null;
+	var satz3 = null;
+
+	for(i in header){
+		if(typeof header[i] == 'string'){
+			byteCount = byteCount + header[i].length;
+		}
+	}
+	for(i in body){
+		if(typeof body[i] == 'string'){
+			byteCount = byteCount + body[i].length;
+		}
+	}
+	for(i in footer){
+		if(typeof footer[i] == 'string'){
+			byteCount = byteCount + footer[i].length;
+		}
+	}
+
+	satz1 = '9202' + String(byteCount);
+	var satzLänge = parseInt(getBytesNeeded(satz1));
+	satz2 = '9202' + String(byteCount + satzLänge);
+	if(getBytesNeeded(satz1) != getBytesNeeded(satz2)){
+		satz3 = '9202' + String(byteCount + parseInt(getBytesNeeded(satz2)));
+		return getBytesNeeded(satz3) + satz3 + stop();
+	}
+
+	return getBytesNeeded(satz2) + satz2 + stop();
+}
 function getPath(){
 	return new Promise((resolve,reject)=>{
 		if(path == null){
@@ -133,10 +165,39 @@ function recalculateBlockSizeOfBody(body){
 	}
 	return newBody
 }
-function assembleAndCreate(header, body, footer, fn, zs){
+function buildFooter(header,body){
+	var satzart = null;
+	var footer = [];
+	for(var i in header){
+		if(checkLineForCode(header[i], "8000")==1){
+			satzart = header[i].split("8000")[1].split("")
+			satzart.splice(3,1,"1");
+			satzart.splice(4,2);
+			satzart = satzart.join("")
+		}
+	}
+	footer.push("0138000"+satzart+stop());
+	footer.push("0128100000000");
+	footer.push(bestimmeGesamtLänge(header,body,footer))
+	footer.splice(1,1);
+	var blockLengthLine = bestimmeBlockLänge(footer);
+	var value = blockLengthLine.substring(7,blockLengthLine.length - 2);
+	var bitsToAdd = 4 - value.length;
+
+	var lineCheckSum = String(parseInt(blockLengthLine.substring(0,3)) + bitsToAdd).padStart(3,'0');
+	value = String(parseInt(value) + bitsToAdd).padStart(4,'0');
+	footer.splice(1,0,lineCheckSum+"8100"+value+stop());
+	return footer;
+
+}
+function assembleAndCreate(header, body, fn, zs){
 	return new Promise((resolve,reject)=>{
 
 		body = recalculateBlockSizeOfBody(body);
+		footer = buildFooter(header,body);
+
+		ldtHelper.checkAllSums(header, body, footer)
+
 		var fullDocString = header.join('') + body.join('') + footer.join('');
 		ctt.parseText(fullDocString, zs).then((buff)=>{
 			fs.writeFile(fn, buff,(err)=>{
