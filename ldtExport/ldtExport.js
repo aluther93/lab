@@ -281,10 +281,10 @@ function buildFooter(){
 		satzArt = '01380008221' + docBuilder.stop();
 		returnValue.push(satzArt);
 
-		for(i in header){
+		for(var i in header){
 			byteCounterHeader = byteCounterHeader + exportHelper.readByteLength(header[i]);
 		}
-		for(j in body){
+		for(var j in body){
 			byteCounterBody = byteCounterBody + exportHelper.readByteLength(body[j]);
 		}
 

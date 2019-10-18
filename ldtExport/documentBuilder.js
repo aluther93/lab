@@ -72,7 +72,7 @@ function bestimmeBlockLänge(arr){
 	var satz3 = null;
 	for(i in arr){
 		if(typeof arr[i] == 'string'){
-			byteCount = byteCount + parseInt(arr[i].substring(0, 3));
+			byteCount = byteCount + arr[i].length;
 		}
 	}
 
@@ -97,10 +97,44 @@ function getPath(){
 function returnFalse(){
 	return false;
 }
+function divideBody(body){
+	var returnArr = [];
+	var currentBefund = [];
+	for(var i in body){
+		if(checkLineForCode(body[i], "8000")==1){
+			if(currentBefund.length != 0){
+				returnArr.push(currentBefund);
+			}
+			currentBefund = [];
+		}
+		currentBefund.push(body[i])
+	}
+	returnArr.push(currentBefund);
+	return returnArr;
+}
+function recalculateBlockSizeOfBody(body){
+
+	var befundeContainer = divideBody(body);
+	for(var i in befundeContainer){
+		var calculatedBlockLength = bestimmeBlockLänge(befundeContainer[i])
+		for(var j in befundeContainer[i]){
+			if(checkLineForCode(befundeContainer[i][j], "8100")==1){
+				befundeContainer[i][j] = bestimmeBlockLänge(befundeContainer[i])			
+			}
+		}
+	}
+	var newBody = [];
+	for(var x in befundeContainer){
+		for(var y in befundeContainer[x]){
+			newBody.push(befundeContainer[x][y]);
+		}
+	}
+	return newBody
+}
 function assembleAndCreate(header, body, footer, fn, zs){
 	return new Promise((resolve,reject)=>{
 
-
+		body = recalculateBlockSizeOfBody(body);
 		var fullDocString = header.join('') + body.join('') + footer.join('');
 		ctt.parseText(fullDocString, zs).then((buff)=>{
 			fs.writeFile(fn, buff,(err)=>{
@@ -109,37 +143,10 @@ function assembleAndCreate(header, body, footer, fn, zs){
 				}
 				reject(">>> ERROR: FILE konnte nicht erstellt werden");
 			});
-		},reject)
-
-
-		//------------------------------------------------------------------
-		var ibmSetstring = "P,`,p,á,!,1,A,Q,a,q,ß,2,2,B,R,b,r,é,3,3,#,3,C,S,c,s,â,4,4,$,4,D,T,d,t,ä,ö,5,5,§,%,5,E,U,e,u,à,6,6,&,6,F,V,f,v,μ,7,7,',7,G,W,g,w,ç,8,8,(,8,H,X,h,x,ê,°,9,9,),9,I,Y,i,y,Ö,10,A,*,:,J,Z,j,z,è,Ü,11,B,+,;,K,[,k,½,12,C,<,L,l,13,D,-,=,M,],m,14,E,.,>,N,^,n,Ä,15,F,/,?,O,o"
-		var iso88591SetString = "0,0,0,@,P,`,p,°,à,1,1,!,1,A,Q,a,q,¡,Ñ,á,ñ,2,2,2,B,R,b,r,â,ò,3,3,#,3,C,S,c,s,ó,4,4,$,4,D,T,d,t,Ä,ä,ô,5,5,%,5,E,U,e,u,μ,Å,å,6,6,&,6,F,V,f,v,Æ,Ö,æ,ö,7,7,',7,G,W,g,w,§,Ç,ç,8,8,(,8,H,X,h,x,è,9,9,),9,I,Y,i,y,É,é,ù,10,A,LF,*,:,J,Z,j,z,º,ê,ú,11,B,+,;,K,[,k,ë,û,12,C,,,<,L,l,Ü,ì,ü,13,D,-,=,M,],m,½,í,14,E,.,>,N,^,n,î,15,F,/,?,O,_,o,ß,ï,"
-		var iso885015SetString = "0,0,0,@,P,`,p,°,À,Ð,à,ð,1,1,!,1,A,Q,a,q,¡,±,Á,Ñ,á,ñ,2,2,2,B,R,b,r,¢,²,Â,Ò,â,ò,3,3,#,3,C,S,c,s,£,³,Ã,Ó,ã,ó,4,4,$,4,D,T,d,t,€,Ž,Ä,Ô,ä,ô,5,5,%,5,E,U,e,u,¥,μ,Å,Õ,å,õ,6,6,&,6,F,V,f,v,Š,¶,Æ,Ö,æ,ö,7,7,',7,G,W,g,w,§,·,Ç,×,ç,÷,8,8,(,8,H,X,h,x,š,ž,È,Ø,è,ø,9,9,),9,I,Y,i,y,©,¹,É,Ù,é,ù,10,A,*,:,J,Z,j,z,ª,º,Ê,Ú,ê,ú,11,B,+,;,K,[,k,{,«,»,Ë,Û,ë,û,12,C,,,<,L,\,l,|,¬,OE,Ì,Ü,ì,ü,13,D,CR,-,=,M,],m,},oe,Í,Ý,í,ý,14,E,.,>,N,^,n,~,®,Ÿ,Î,Þ,î,þ,15,F,/,?,O,_,o,¯,¿,Ï,ß,ï"
-		
-		ctt.parseText(ibmSetstring, 2).then((buff)=>{
-			fs.writeFile("./ibmBeweis", buff,()=>{
-				console.log("IBM File wurde erstellt");
-			},reject)
-		},()=>{
-			console.log("IBM File konnte nicht erstellt werden");
+		},(e)=>{
+			console.log(e)
+			reject()
 		})
-		ctt.parseText(iso88591SetString, 3).then((buff)=>{
-			fs.writeFile("./Iso8851-1", buff,()=>{
-				console.log("ISO8851 File wurde erstellt");
-			},reject)
-		},()=>{
-			console.log("ISO8851 File konnte nicht erstellt werden");
-		})
-		ctt.parseText(iso885015SetString, 4).then((buff)=>{
-			fs.writeFile("./Iso8859-15", buff,()=>{
-				console.log("Iso8859-15 File wurde erstellt");
-			},reject)
-		},()=>{
-			console.log("Iso8859-15 File konnte nicht erstellt werden");
-		})
-		//------------------------------------------------------------------
-
 	});
 }
 function isValidPath(x){
@@ -204,4 +211,44 @@ function makeid(length) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
    }
    return result;
+}
+function checkLineForCode(line, code){
+	if(!line.includes(code)){
+	 	return false;
+	}else{
+		const reservedCode = "XXXX"; 
+		var lineSplit = line.split(code);
+		var sum = parseInt(lineSplit[0]);
+		var fieldlength = lineSplit[1].length;
+		if(sum == 'NaN')
+		{
+			process.exit(" >>ERROR: Die Prüfsumme ist keine gültige Zahl.");
+		}
+		if(sum != fieldlength + code.length + 3)
+		{
+	//Fehlerbehebung falls Schlüssel mehrfach in Zeile vorkommt
+			try
+			{	
+	// Array mit 3 Feldern ensteht aus einer Zeile wenn das gesuchte Wort 2 mal vorkommt
+				if(lineSplit.length == 3)
+				{
+					
+					var fixedLine = lineSplit[0] + reservedCode + lineSplit[1] + code + lineSplit[2];
+					return 1 + checkSum(fixedLine, reservedCode);
+					
+				}
+			}
+			catch(e)
+			{
+				con.log(true,e)
+				con.log(false,">> Error was caught! Handling: Line is corrupted. Ignore current line and proceed with next one.");
+				return 0;
+			}
+		}
+		else
+		{
+			return 1;
+		}
+		return 0;
+	}
 }

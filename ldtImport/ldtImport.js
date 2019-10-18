@@ -207,35 +207,16 @@ function switchLineOperation(line){
 
 
 				break;  
-			case (ldtHelper.checkSum(line, '8000')==1):
-				if(unreadableHeader){
-					ldtHelper.incUnsaveables();
-					resolve();
-					break;
-				}
-				for(code in befundArten){
-					if(line.includes(code)){
-						if(container != null){
-							containerStack.push(container);
-						}
-
-						container = ldtHelper.produceContainer();
-						container.ldtVersion = ldtVersion;
-						container.newLine = line;
-						container.befArt = code;
-						container.quelle = quelle;
-
-						resolve(setStateBody);
-						break;
-					}
-				}
 				//break;
 			//ldtVersion im Header
 			//STATT LINE INCLUDES CHECKSUM(LINE, CODE) HIER!
-			case (ldtHelper.checkSum(line, '9212')==1):
+			case ldtHelper.checkSum(line, '9212')==1:
 				if(processState == 'header'){
 					splitLine = line.split('9212');
 					ldtVersion = splitLine[1];
+					console.log(ldtVersion)
+					console.log(line)
+					console.log(lineNumber)
 					resolve();
 					break;
 				}
@@ -251,6 +232,28 @@ function switchLineOperation(line){
 
 					break;
 				}
+			case (ldtHelper.checkSum(line, '8000')==1):
+				if(unreadableHeader){
+					ldtHelper.incUnsaveables();
+					resolve();
+					break;
+				}
+				for(code in befundArten){
+					if(line.includes(code)){
+						if(container != null){
+							containerStack.push(container);
+						}
+						container = ldtHelper.produceContainer();
+						container.ldtVersion = ldtVersion;
+						container.newLine = line;
+						container.befArt = code;
+						container.quelle = quelle;
+
+						resolve(setStateBody);
+						break;
+					}
+				}
+				break;
 			default:
 				if(processState == 'body' && !(unreadableHeader || unreadableBody)){
 					container.newLine = line

@@ -120,41 +120,43 @@ function exitFunction(msg){
 // >> line: die aktuelle Zeile die gelesen wird
 // >> code: die erkannte Zeichenfolge welche das Feld beschreibt 
 function checkSum(line, code){
-
-	if(!line.includes(code)) return false;
-	var lineSplit = line.split(code);
-	var sum = parseInt(lineSplit[0]);
-	var fieldlength = lineSplit[1].length;
-	if(sum == 'NaN')
-	{
-		process.exit(" >>ERROR: Die Prüfsumme ist keine gültige Zahl.");
-	}
-	if(sum != fieldlength + code.length + 5)
-	{
-//Fehlerbehebung falls Schlüssel mehrfach in Zeile vorkommt
-		try
-		{	
-// Array mit 3 Feldern ensteht aus einer Zeile wenn das gesuchte Wort 2 mal vorkommt
-			if(lineSplit.length == 3)
+	if(!line.includes(code)){
+	 	return false;
+	}else{
+		var lineSplit = line.split(code);
+		var sum = parseInt(lineSplit[0]);
+		var fieldlength = lineSplit[1].length;
+		if(sum == 'NaN')
+		{
+			process.exit(" >>ERROR: Die Prüfsumme ist keine gültige Zahl.");
+		}
+		if(sum != fieldlength + code.length + 5)
+		{
+	//Fehlerbehebung falls Schlüssel mehrfach in Zeile vorkommt
+			try
+			{	
+	// Array mit 3 Feldern ensteht aus einer Zeile wenn das gesuchte Wort 2 mal vorkommt
+				if(lineSplit.length == 3)
+				{
+					
+					var fixedLine = lineSplit[0] + reservedCode + lineSplit[1] + code + lineSplit[2];
+					return 1 + checkSum(fixedLine, reservedCode);
+					
+				}
+			}
+			catch(e)
 			{
-				
-				var fixedLine = lineSplit[0] + reservedCode + lineSplit[1] + code + lineSplit[2];
-				return 1 + checkSum(fixedLine, reservedCode);
-				
+				con.log(true,e)
+				con.log(false,">> Error was caught! Handling: Line is corrupted. Ignore current line and proceed with next one.");
+				return 0;
 			}
 		}
-		catch(e)
+		else
 		{
-			con.log(true,e)
-			con.log(false,">> Error was caught! Handling: Line is corrupted. Ignore current line and proceed with next one.");
-			return 0;
+			return 1;
 		}
+		return 0;
 	}
-	else
-	{
-		return 1;
-	}
-	return 0;
 }
 function verifyLine(line){
 	return (line.length + 2) == parseInt(line.substring(0,3));
