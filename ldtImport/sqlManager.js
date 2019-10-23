@@ -44,8 +44,7 @@ function updateEinsenderInformation(einsInfo){
 					.insert(einsInfo)
 					.then(resolve, reject)
 			}else{
-				//Überprüfe ob der bevorzugte Zeichensatz geändert wurde
-				zeichensatzCompare(res[0]['zeichensatz'], einsInfo['zeichensatz'], einsInfo['eins']);
+				delete einsInfo['zeichensatz'] // Zeichensatz soll nach INitialisierung niemals geändert werden
 				knex('einsender')
 					.where({'eins' : einsInfo['eins']})
 					.update(einsInfo)
@@ -117,9 +116,4 @@ function insertBefunde(containerStack){
 		}
 		Promise.all(promiseArray).then(resolve,reject)
 	});
-}
-function zeichensatzCompare(zs1, zs2, eins){
-	if(zs1 != zs2){
-		con.log(false, "> ACHTUNG: Der Einsender '"+eins+"' ändert seinen bevorzugten Zeichensatz von "+zs1+"=>"+zs2);
-	}
 }
