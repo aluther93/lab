@@ -255,7 +255,7 @@ function generateFileName(){
 		var tempPath = path  + tempName;
 		var freeNameSpace = fs.access(tempPath, fs.F_OK, (err)=>{
 			if(err){
-				if(err.errno == -4058){
+				if(err.code == 'ENOENT'){
 					resolve(tempPath);
 				}else{
 					reject(err);
