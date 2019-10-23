@@ -60,7 +60,6 @@ CREATE TABLE IF NOT EXISTS `einsender` (
   `strasse` varchar(50) COLLATE utf8_german2_ci DEFAULT NULL,
   `plz` varchar(50) COLLATE utf8_german2_ci DEFAULT NULL,
   `ort` varchar(50) COLLATE utf8_german2_ci DEFAULT NULL,
-  `kbv` varchar(50) COLLATE utf8_german2_ci DEFAULT NULL,
   `kundenNr` varchar(50) COLLATE utf8_german2_ci DEFAULT NULL,
   `zeichensatz` int(11) DEFAULT NULL,
   PRIMARY KEY (`eins`)

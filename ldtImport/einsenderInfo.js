@@ -10,7 +10,6 @@ var einsInfo = {
 	'0205':null,
 	'0215':null,
 	'0216':null,
-	'0101':null,
 	'8312':null,
 	'9106':null
 }
@@ -26,7 +25,6 @@ function newContainer(){
 			'0205':null,
 			'0215':null,
 			'0216':null,
-			'0101':null,
 			'8312':null,
 			'9106':null
 		}
@@ -66,7 +64,6 @@ function getNextEinsenderInformationContainer(eins){
 		'0205':'strasse',
 		'0215':'plz',
 		'0216':'ort',
-		'0101':'kbv',
 		'8312':'kundenNr',
 		'9106':'zeichensatz'
 	}
