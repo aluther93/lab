@@ -95,7 +95,7 @@ function mainLoop(anyFlag){
 		verifyAndHandleLine(line).then(mainLoop, process.exit)
 	}else{
 		running = false;
-		setTimeout(terminateProcess,3000)
+		terminateProcess();
 	}
 }
 function terminateProcess(){

@@ -10,8 +10,8 @@
 
 
 ( ) Reihenfolge der Einträge im Header sollen nicht durcheinander geraten
+( ) Lösung für 3s Timeout bevor connections gelöscht werden
 
 ( ) standard Kopfsignatur des Labors fehlt
 ( ) externe config Datei enthält außerdem den Labor Signatur Header
 
-( ) Lösung für 3s Timeout bevor connections gelöscht werden
