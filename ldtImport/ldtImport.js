@@ -43,6 +43,9 @@ if(typeof process.argv[3] != 'undefined'){
 	if(localArgs.includes('-v') || localArgs.includes('-verbose')){
 		con.setVerbose()
 	}
+	if(localArgs.includes('-r') || localArgs.includes('-routine')){
+		con.setRoutine()
+	}
 	for(i in localArgs){
 		if(localArgs[i].charAt(0) != '-'){
 			var quelle = localArgs[i];
@@ -115,7 +118,7 @@ function verifyAndHandleLine(lineToCheck){
 			line = lineAlt;
 		}
 		if(!ldtHelper.verifyLine(line)){
-			con.log(false,">>ERROR: beschädigtes Dokument! ... in Zeile " + lineNumber);
+			con.log(2,">>ERROR: beschädigtes Dokument! ... in Zeile " + lineNumber);
 			con.log(true, "++ während des Verarbeitungsschritts: " + processState);
 			con.log(true,"++ betroffene Zeile: " + line);
 			con.log(true, false);
@@ -143,7 +146,7 @@ function verifyAndHandleLine(lineToCheck){
 					resolve(false);
 				}
 			}, (res, err)=>{
-				con.log(false,">>ERROR:Ein unerwarteter Fehler ist aufgetreten ... in Zeile " + lineNumber);
+				con.log(2,">>ERROR:Ein unerwarteter Fehler ist aufgetreten ... in Zeile " + lineNumber);
 				reject(res)
 			});	
 		}
@@ -183,7 +186,7 @@ function switchLineOperation(line){
 					
 					
 				}, (res)=>{
-					con.log(false, res)
+					con.log(2, res)
 					container = null;
 					resolve();
 				})
@@ -200,7 +203,7 @@ function switchLineOperation(line){
 					
 					
 				}, (res)=>{
-					con.log(false, res)
+					con.log(2, res)
 					container = null;
 					resolve();
 				})
@@ -318,8 +321,8 @@ function postResults(container){
 					con.log(false,"Container erfolgreich verarbeitet");
 					resolve();
 				},(e)=>{
-					con.log(false, "Container wurde nicht vollständig in die Datenbank überführt.");
-					con.log(false, ">>ERROR: " + e)
+					con.log(2, "Container wurde nicht vollständig in die Datenbank überführt.");
+					con.log(2, ">>ERROR: " + e)
 					resolve()
 				})
 			}catch(e){

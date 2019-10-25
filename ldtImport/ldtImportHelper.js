@@ -92,7 +92,6 @@ function getParsedValue(code, line){
 	return output;
 }
 function exitFunction(msg){
-	con.log(false,false);
 	if(unsaveable > 0){
 		msg0 = "> " + unsaveable;
 		if(unsaveable == 1){
@@ -100,7 +99,7 @@ function exitFunction(msg){
 		}else{
 			msg0 = msg0 + " Befunde sind nicht wiederherstellbar.";
 		}
-		con.log(false,msg0);
+		con.log(2,msg0);
 	}
 	if(msg == 0)
 	{
@@ -112,8 +111,9 @@ function exitFunction(msg){
 		msg1 = msg1 + " Erfolgreich importiert.";
 		con.log(false,msg1);
 		con.log(false, "> Befunde für User: " + users)
+	}else{
+		con.log(2,msg);
 	}
-	con.log(false,msg);
 	return;
 }
 // Überprüft ob das gelesene Feld mit der Prüfsumme übereinstimmt
@@ -147,7 +147,7 @@ function checkSum(line, code){
 			catch(e)
 			{
 				con.log(true,e)
-				con.log(false,">> Error was caught! Handling: Line is corrupted. Ignore current line and proceed with next one.");
+				con.log(2,">> Error was caught! Handling: Line is corrupted. Ignore current line and proceed with next one.");
 				return 0;
 			}
 		}
@@ -162,6 +162,5 @@ function verifyLine(line){
 	return (line.length + 2) == parseInt(line.substring(0,3));
 }
 function inCaseOfReject(err){
-	console.log(err)
-	con.log(false,"THERE WAS AN UNEXPECTED REJECT");
+	con.log(2,"THERE WAS AN UNEXPECTED REJECT");
 }

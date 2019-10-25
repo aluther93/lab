@@ -6,8 +6,8 @@
 (x) generateFileName fs.access --> Error-Number ist Versionsabhängig ... nicht immer -4058 // orientierung an Error name enoent
 (x) BKV Nummer aus EInsender komplett löschen
 (x) Zeichensatz in EinsenderTable wird nur einmal initialisiert und danach nurnoch von Admin geändert
+(x) Log für fatale Errors -routine nur für  full-rejects
 
-( ) Log für fatale Errors -routine nur für  full-rejects
 
 ( ) Reihenfolge der Einträge im Header sollen nicht durcheinander geraten
 

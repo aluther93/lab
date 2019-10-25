@@ -1,9 +1,11 @@
 module.exports = {
 	setVerbose:setVerbose,
+	setRoutine:setRoutine,
 	log:log
 }
 
 var verbose = false;
+var routine = false;
 function setVerbose(){
 	return new Promise((resolve,reject)=>{
 		verbose = true;
@@ -15,22 +17,46 @@ function setVerbose(){
 	});
 	x = 1
 }
+function setRoutine(){
+	return new Promise((resolve,reject)=>{
+		routine = true;
+		if(routine == true){
+		 resolve();
+		}else{
+			reject()
+		}
+	});
+	x = 1
+}
 // WENN MSG FALSE IST WIRD KEIN ZEITSTEMPEL ERSTELLT
 // CONSOLENAUSGABE KANN ÜBER ALT GESTEUERT WERDEN wenn !msg
-function log(isVerbose, msg, alt){
+// false := Standart Logging
+// true := verbose
+// loggingMode > 1 := Routine (höchste Priorität)
+function log(loggingMode, msg, alt){
+	
+	if(loggingMode > 1){
+		console.log(zeitStempel() +" "+ msg);
+	}
+
+	if(routine){
+		return;
+	}
+
 	if(typeof alt == "undefined"){
 		alt = "";
 	}
+
 	if(!msg){
-		if(isVerbose && verbose){
+		if(loggingMode && verbose){
 			console.log(alt);
-		}else if(!isVerbose){
+		}else if(!loggingMode){
 			console.log(alt);
 		}
 	}else{
-		if(isVerbose && verbose){
+		if(loggingMode && verbose){
 			console.log(zeitStempel() +" "+ msg);
-		}else if(!isVerbose){
+		}else if(!loggingMode){
 			console.log(zeitStempel() +" "+ msg);
 		}
 	}

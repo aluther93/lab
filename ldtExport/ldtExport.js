@@ -28,6 +28,9 @@ for(i in argArray){
 			if(argArray[i] == '-v' || argArray[i] == '-verbose'){
 				con.setVerbose();
 			}
+			if(argArray[i] == '-r' || argArray[i] == '-routine'){
+				con.setRoutine();
+			}
 			break;
 		default:
 			if(einsender == null){
@@ -306,7 +309,7 @@ function findName(){
 	return new Promise((resolve,reject)=>{
 		docBuilder.generateFileName().then((find)=>{
 			if(!find){
-				con.log(false," ACHTUNG: KOLLISION bei Namensvergabe ... Erneuter Versuch")
+				con.log(2," ACHTUNG: KOLLISION bei Namensvergabe ... Erneuter Versuch")
 				squeezeIntoProcessChain(findName).then(resolve, reject);
 			}else{
 				fileName = find;
@@ -332,11 +335,11 @@ function exitFunction(msg){
 		}
 		con.log(false, false, "");
 		con.log(false,"> "+assembledString+" wurde exportiert.");
-		con.log(false,"> "+ fileName);
+		con.log(2,"> "+ fileName);
 	}
 	else
 	{
-		con.log(false,msg);
+		con.log(2,msg);
 	}
 }
 function closeSqlConnection(){

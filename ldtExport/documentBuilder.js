@@ -304,7 +304,7 @@ function checkLineForCode(line, code){
 			catch(e)
 			{
 				con.log(true,e)
-				con.log(false,">> Error was caught! Handling: Line is corrupted. Ignore current line and proceed with next one.");
+				con.log(2,">> Error was caught! Handling: Line is corrupted. Ignore current line and proceed with next one.");
 				return 0;
 			}
 		}
