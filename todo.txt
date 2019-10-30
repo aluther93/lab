@@ -7,11 +7,11 @@
 (x) BKV Nummer aus EInsender komplett löschen
 (x) Zeichensatz in EinsenderTable wird nur einmal initialisiert und danach nurnoch von Admin geändert
 (x) Log für fatale Errors -routine nur für  full-rejects
+(x) Lösung für 3s Timeout bevor connections gelöscht werden
+(x) standard Kopfsignatur des Labors fehlt
+(x) externe config Datei enthält außerdem den Labor Signatur Header
+
 
 
 ( ) Reihenfolge der Einträge im Header sollen nicht durcheinander geraten
-( ) Lösung für 3s Timeout bevor connections gelöscht werden
-
-( ) standard Kopfsignatur des Labors fehlt
-( ) externe config Datei enthält außerdem den Labor Signatur Header
 

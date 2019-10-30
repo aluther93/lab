@@ -20,14 +20,14 @@ var zwingendErforderlich = {
 	'8000':'satzart',
 	'8100':'satzlänge',
 	'9212':'ldtVersion',
-	'0201':'bsnr1',
-	'0203':'bsnr2',
-	'0205':'strasse',
-	'0216':'ort',
-	'0215':'plz',
+	'0201': getLaborSig,
+	'0203': getLaborSig,
+	'0205': getLaborSig,
+	'0215': getLaborSig,
+	'0216': getLaborSig,
 	'0101':'kbv',
 	'9106':'zeichensatz',
-	'8312':'kundenNr',
+	'8312': getLaborSig,
 	'9103':'datum'
 };
 var zeichensatzIdent = 0;
@@ -36,15 +36,21 @@ function buildDocHeader(arr){
 		var counter = 0;
 		for(i in zwingendErforderlich){
 			var satz = '';
-			var wort = zwingendErforderlich[i];
-			if(typeof arr[wort] != 'undefined'){
-				if(wort == 'zeichensatz') zeichensatzIdent = arr[wort];
-				satz = String(i) + String(arr[wort]); 
+			if(typeof zwingendErforderlich[i] == 'function'){
+				var wort = zwingendErforderlich[i](i);
+				satz = String(i) + String(wort);
 				documentArr[counter] = getBytesNeeded(satz) + satz + stop();
+			}else{
+				var wort = zwingendErforderlich[i];
+				if(typeof arr[wort] != 'undefined'){
+					if(wort == 'zeichensatz') zeichensatzIdent = arr[wort];
+					satz = String(i) + String(arr[wort]); 
+					documentArr[counter] = getBytesNeeded(satz) + satz + stop();
+				}
+				if(wort == 'satzlänge'){
+					documentArr[counter] = bestimmeBlockLänge;
+				} 
 			}
-			if(wort == 'satzlänge'){
-				documentArr[counter] = bestimmeBlockLänge;
-			} 
 			counter++;
 		}
 		resolve(documentArr);
@@ -314,4 +320,10 @@ function checkLineForCode(line, code){
 		}
 		return 0;
 	}
+}
+function getLaborSig(code){
+	if(typeof rootconfig.labSignatur[code] == 'undefined'){
+		process.exit("Eine zwingend erforderliche Zeile wurde nicht in der RootConfig-Datei deklariert. Zeile mit Code:'"+code+"' ist nicht definiert.")
+	}
+	return rootconfig.labSignatur[code];
 }
