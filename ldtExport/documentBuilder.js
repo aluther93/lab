@@ -15,8 +15,10 @@ var ldtHelper = require('./ldtExportHelper')
 
 var finalFileName = null;
 var path = null;
-var documentArr = [];
-var zwingendErforderlich = {
+var zeichensatzIdent = 0;
+
+//Dieses Objekt stellt eine Bauanleitung für den gesamten Header dar. 
+var headerBlueprint = {
 	'8000':'satzart',
 	'8100':'satzlänge',
 	'9212':'ldtVersion',
@@ -25,36 +27,60 @@ var zwingendErforderlich = {
 	'0205': getLaborSig,
 	'0215': getLaborSig,
 	'0216': getLaborSig,
-	'0101':'kbv',
+	'8300': getLaborSig,
+	'0101': getLaborSig,
 	'9106':'zeichensatz',
 	'8312': getLaborSig,
 	'9103':'datum'
 };
-var zeichensatzIdent = 0;
-function buildDocHeader(arr){
+var headerOrder = [
+	'8000',
+	'8100',
+	'9212',
+	'0201',
+	'0203',
+	'0205',
+	'0215',
+	'0216',
+	'8300',
+	'0101',
+	'9106',
+	'8312',
+	'9103'
+]
+
+function buildDocHeader(sqlResults){
 	return new Promise((resolve,reject)=>{
-		var counter = 0;
-		for(i in zwingendErforderlich){
-			var satz = '';
-			if(typeof zwingendErforderlich[i] == 'function'){
-				var wort = zwingendErforderlich[i](i);
-				satz = String(i) + String(wort);
-				documentArr[counter] = getBytesNeeded(satz) + satz + stop();
-			}else{
-				var wort = zwingendErforderlich[i];
-				if(typeof arr[wort] != 'undefined'){
-					if(wort == 'zeichensatz') zeichensatzIdent = arr[wort];
-					satz = String(i) + String(arr[wort]); 
-					documentArr[counter] = getBytesNeeded(satz) + satz + stop();
-				}
-				if(wort == 'satzlänge'){
-					documentArr[counter] = bestimmeBlockLänge;
-				} 
+		var documentArr = [];
+		var code = '';
+		for(i in headerOrder){
+			code = headerOrder[i]
+			if(typeof headerBlueprint[code] != 'undefined'){
+				documentArr.push(buildHeaderLine(code, sqlResults));
 			}
-			counter++;
 		}
 		resolve(documentArr);
 	});	
+}
+function buildHeaderLine(code, sqlResults){
+	var satz = '';
+	var instruction = headerBlueprint[code];
+	if(typeof instruction == 'function'){
+		var wort = instruction(code);
+		satz = String(code) + String(wort);
+		return getBytesNeeded(satz) + satz + stop();
+	}else{
+		if(instruction == 'zeichensatz'){
+			zeichensatzIdent = sqlResults[instruction];
+		}
+		if(instruction == 'satzlänge'){
+			return bestimmeBlockLänge;
+		} 
+		if(typeof sqlResults[instruction] != 'undefined'){
+			satz = String(code) + String(sqlResults[instruction]); 
+			return getBytesNeeded(satz) + satz + stop();
+		}
+	}
 }
 function setPath(value){
 	path = value;
