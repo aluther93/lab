@@ -57,6 +57,7 @@ if(typeof process.argv[3] != 'undefined'){
 }else{
 		var quelle = process.argv[2];
 }
+einsenderInfo.setQuelle(quelle);
 
 process.on('exit', ldtHelper.exitFunction);
 

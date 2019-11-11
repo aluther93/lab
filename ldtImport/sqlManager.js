@@ -73,11 +73,25 @@ function getEinsenderFromDB(quelle, quellkuerzel){
 function updateEinsenderInformation(einsInfo){
 	return new Promise((resolve,reject)=>{
 	beginQuery().then(()=>{
+		knex('einsenderoutput')
+			.where({'einsender': einsInfo['eins']})
+			.then(res=> {
+				if(res.length == 0){
+					knex('einsenderoutput')
+						.insert({'einsender': einsInfo['eins']})
+						.then(resolve,reject)
+				}else{
+					resolve();
+				}
+			})
+	})
+	beginQuery().then(()=>{
 		knex('einsender')
-			.where({'eins' : einsInfo['eins']})
+			.where({'eins' : einsInfo['eins'], 'quelle' : einsInfo['quelle']})
 			.then(res => {
 				queryDone()
 				if(res.length == 0){
+					console.log(einsInfo);
 					knex('einsender')
 						.insert(einsInfo)
 						.then((e)=>{
@@ -162,7 +176,6 @@ function insertBefunde(containerStack){
 					'vorname':container['vorname'],
 					'gebTag':container['gebTag'],
 					'ldtVersion':container['ldtVersion'],
-					'zeichensatz':container['zeichensatz'],
 					'content':container['content'].join(',')
 				}
 				promiseArray.push(knex('befunde').insert(befundObj).catch((e)=>{

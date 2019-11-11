@@ -1,4 +1,5 @@
 let rootconfig = require('../rootconfig')
+var con = require('./consoleLogging');
 var knex = require("knex")({
   client: "mysql",
   debugging:true,
@@ -35,7 +36,6 @@ function insertAbgerufeneBefunde(einsender, row){
 				'abgerufenAt':knex.fn.now(),
 				'abgerufenFrom':'notYetImplemented',
 				'ldtVersion':row['ldtVersion'],
-				'zeichensatz':row['zeichensatz'],
 				'content':row['content'],
 				'aeDatum':row['aeDatum']
 			})
@@ -49,7 +49,7 @@ function getBefunde(eins){
 				'eins': eins,
 				'status':'bereit'
 			})
-			.select('content', 'ldtVersion', 'zeichensatz', 'labornr','aeDatum')
+			.select('content', 'ldtVersion', 'labornr','aeDatum')
 			.then(resolve,reject);
 	});
 }
@@ -59,7 +59,7 @@ function selectAbgerufeneBefunde(eins){
 			.where({
 				'eins': eins
 			})
-			.select(knex.fn.now(),'content', 'ldtVersion', 'zeichensatz', 'labornr', 'abgerufenAt','aeDatum')
+			.select(knex.fn.now(),'content', 'ldtVersion', 'labornr', 'abgerufenAt','aeDatum')
 			.orderBy('abgerufenAt', 'desc')
 			.then((res)=>{
 				if(res.length == 0){
@@ -97,12 +97,38 @@ function erstelleResult(rows){
 }
 function selectEinsenderInfo(eins){
 	return new Promise((resolve,reject)=>{
-		knex('einsender')
-			.where({
-				'eins':eins
-			})
-			.select()
-			.then(resolve,reject);
+		knex('einsenderoutput')
+			.where({'einsender': eins})
+			.then(res =>{
+				if(res[0]['zeichensatz'] != null){
+					var festgeschriebenerZS = res[0]['zeichensatz'];
+					con.log(true, "Der Zeichensatz wurde wegen Standardoutput auf " + festgeschriebenerZS + " gesetzt!");
+				}
+				if(res[0]['quelle'] != null){
+					console.log("Quelle")
+					knex('einsender')
+						.where({'eins': eins, 'quelle': res[0]['quelle']})
+						.select()
+						.then(result => {
+							if(typeof festgeschriebenerZS != 'undefined'){
+								result[0]['zeichensatz'] = festgeschriebenerZS;
+							}
+							resolve(result);
+						},(e)=>{
+							process.exit(e)
+						})
+				}else{
+					knex('einsender')
+						.where({'eins': eins})
+						.select()
+						.then(result => {
+							if(typeof festgeschriebenerZS != 'undefined'){
+								result[0]['zeichensatz'] = festgeschriebenerZS;
+							}
+							resolve(result);
+						},reject)
+				}
+			},reject)
 	});
 }
 //var sql = "SELECT * FROM einsender WHERE eins = '"+einsender+"';"

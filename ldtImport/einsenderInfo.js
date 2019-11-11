@@ -2,7 +2,8 @@
 module.exports = {
 	hasEinsInfoValue:hasEinsInfoValue,
 	newContainer:newContainer,
-	getNextEinsenderInformationContainer:getNextEinsenderInformationContainer
+	getNextEinsenderInformationContainer:getNextEinsenderInformationContainer,
+	setQuelle:setQuelle
 }
 var einsInfo = {
 	'0201':null,
@@ -14,7 +15,11 @@ var einsInfo = {
 	'9106':null
 }
 var einsInfoStack = [];
+var quelle = null;
 
+function setQuelle(qu){
+	quelle = qu;
+}
 function newContainer(){
 	return new Promise((resolve,reject)=>{
 		var n0 = einsInfoStack.length;
@@ -70,5 +75,6 @@ function getNextEinsenderInformationContainer(eins){
 	for(i in mappings){
 		refinedInformation[mappings[i]] = informationSheet[i]
 	}
+	refinedInformation['quelle'] = quelle;
 	return refinedInformation;
 }

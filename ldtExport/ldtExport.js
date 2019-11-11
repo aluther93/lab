@@ -7,6 +7,7 @@ process.on('exit', exitFunction);
 	
 var path = null;
 var einsender = null;
+var quelle = null;
 var argArray = process.argv;
 var zeichensatz = null;
 
