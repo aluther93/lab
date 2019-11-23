@@ -1,0 +1,21 @@
+node ldtImport.js 
+[-v/-verbose //verbose console logging] 
+[-r/-routine // routine console logging] 
+[quelle // Quelle die mit Quellkürzel zu Einsender gemappt werden kann] 
+[<dateipfad.ldt // Zeilenweise stdin]
+
+
+node ldtExport 
+[einsender[+x] // Einsender dessen Befunde exportiert werden sollen, +'x' als optionale Quellenangabe 'x'] 
+[-v/-verbose //verbose console logging] 
+[-r/-routine // routine console logging] 
+[./path // relativer Pfad für erzeugte Datei]
+
+
+Manuell zu pflegende SQL-Tabellen:
+	-mappings (zwingend erforderlich)
+	-einsenderoutput (bei Bedarf)
+	-Einsender-Spalten f8300/f0101/f8312 (bei Bedarf)
+
+Manuell zu configurierende Dateien:
+	-rootconfig.js

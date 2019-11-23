@@ -1,8 +1,8 @@
 07.11.2019:
 (x) Quelle in der Tabelle Einsender als Teil des Primärschlüssels mitspeichern -> Welche Einsenderdaten im Header überführt werden ist abhängig davon welche Quelle/Einsender Kobmination vorliegt.
-( ) Mit welcher Info kann die Ausgabe einer bestimmten Quelle/Einsender Kombination gesteuert werden?
-( ) die Spalten f8300, f0101, f8312 sollen in der Tabelle Einsender eingefügt werden ... meist sind diese leer dann wird der Standartwert genommen (rootConfig), andernfalls wird der Wert in der Spalte in den zu exportierenden Befund eingefügt 
+(x) Mit welcher Info kann die Ausgabe einer bestimmten Quelle/Einsender Kombination gesteuert werden?
 ( ) anhängen an befund unter welcher quelle dieser angekommen ist
+( ) die Spalten f8300, f0101, f8312 sollen in der Tabelle Einsender eingefügt werden ... meist sind diese leer dann wird der Standartwert genommen (rootConfig), andernfalls wird der Wert in der Spalte in den zu exportierenden Befund eingefügt 
 ( ) einsenderStandard Tabelle anlegen, mit Primärschlüssel einsender und die AusgabeQuelle die standardmäßig ausgegeben wird. Die standard Ausgabequelle kann auch leer sein ... in diesem Fall wird eine "zufällige" Signatur auserwählt. Außerdem Zeichensatz in der Tabelle.
 ( ) Wenn mehrere gleiche Identifier bei den BEfunden vergeben sind soll der LETZTE in die DB überführt werden. Bei dem Fall dass eine WARNUNG ausgegeben wird sollen auch Information zu dem BEfund geliefert werden (benutze REPLACE)
 ( ) BefundTyp (V = Vorbefund, N = Nachmeldung, E = Endbefund) (4. Zustand) E überschreibt E und V, N überschreibt nichts (auch nicht N) Lösung für das Problem mehrere N oder E kommen gleichzeitig in die DB (also selber Primärschlüssel)
@@ -10,6 +10,7 @@
 ( ) "ACHTtung aeDatum der Befunde unterschieden sich" überarbeiten
 ( ) Wenn er Pfad in der rootConfig ohne "/" am Ende angegeben wird ändert sich der Dateiname dementsprechend (path.resolve)
 ( ) Alle Befund und Einsenderfelder haben in der Docu eine feste maximale Länge (Feldtabelle) -> DB Felder updaten
+( ) absoluten pfad errechnen/ angeben können
 
 ------------------------------------------------------------------------------------------------
 (x) SQL Connection auslagern

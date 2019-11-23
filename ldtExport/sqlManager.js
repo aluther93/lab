@@ -95,7 +95,7 @@ function erstelleResult(rows){
 		}
 	});
 }
-function selectEinsenderInfo(eins){
+function selectEinsenderInfo(eins, explicitQuelle){
 	return new Promise((resolve,reject)=>{
 		knex('einsenderoutput')
 			.where({'einsender': eins})
@@ -104,13 +104,17 @@ function selectEinsenderInfo(eins){
 					var festgeschriebenerZS = res[0]['zeichensatz'];
 					con.log(true, "Der Zeichensatz wurde wegen Standardoutput auf " + festgeschriebenerZS + " gesetzt!");
 				}
+				if(explicitQuelle != null){
+					res[0]['quelle'] = explicitQuelle;
+					con.log(true, "Die explizit angegebene Quelle lautet "+explicitQuelle);	
+				}
 				if(res[0]['quelle'] != null){
-					console.log("Quelle")
 					knex('einsender')
 						.where({'eins': eins, 'quelle': res[0]['quelle']})
 						.select()
 						.then(result => {
-							if(typeof festgeschriebenerZS != 'undefined'){
+							// Wenn der Zeichensatz laut Export festgeschrieben ist für den Einsender, aber explizit eine Quelle angegeben wurde -> Verwendung des Zeichensatzes der explizit angegebenen Quelle
+							if(typeof festgeschriebenerZS != 'undefined' && explicitQuelle == null){
 								result[0]['zeichensatz'] = festgeschriebenerZS;
 							}
 							resolve(result);

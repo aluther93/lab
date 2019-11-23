@@ -36,6 +36,11 @@ for(i in argArray){
 		default:
 			if(einsender == null){
 				einsender = argArray[i];
+				if(einsender.includes("+")){
+					var tempSplitArray = einsender.split("+")
+					einsender = tempSplitArray[0];
+					quelle = tempSplitArray[1];
+				}
 			}else{
 				process.exit(">>ERROR: Einsender kann nicht eindeutig identifiziert werden.")
 			}
@@ -162,7 +167,7 @@ function updateStatusAbgerufen(){
 }
 function getEinsenderInfo(){
 	return new Promise((resolve,reject)=>{
-		sqlManager.selectEinsenderInfo(einsender).then((res)=>{
+		sqlManager.selectEinsenderInfo(einsender, quelle).then((res)=>{
 			if(typeof res[0] != 'undefined'){
 				zeichensatz = res[0]['zeichensatz'];
 				resolve(res[0]);
