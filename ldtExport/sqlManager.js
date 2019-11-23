@@ -42,15 +42,26 @@ function insertAbgerufeneBefunde(einsender, row){
 			.then(resolve,reject);
 	});
 }
-function getBefunde(eins){
+function getBefunde(eins, quelle){
 	return new Promise((resolve,reject)=>{
-		knex('befunde')
-			.where({
-				'eins': eins,
-				'status':'bereit'
-			})
-			.select('content', 'ldtVersion', 'labornr','aeDatum')
-			.then(resolve,reject);
+		if(quelle == null){
+			knex('befunde')
+				.where({
+					'eins': eins,
+					'status':'bereit'
+				})
+				.select('content', 'ldtVersion', 'labornr','aeDatum')
+				.then(resolve,reject);
+		}else{
+			knex('befunde')
+				.where({
+					'eins': eins,
+					'quelle':quelle,
+					'status':'bereit'
+				})
+				.select('content', 'ldtVersion', 'labornr','aeDatum')
+				.then(resolve,reject);
+		}
 	});
 }
 function selectAbgerufeneBefunde(eins){
@@ -100,6 +111,9 @@ function selectEinsenderInfo(eins, explicitQuelle){
 		knex('einsenderoutput')
 			.where({'einsender': eins})
 			.then(res =>{
+				if(res.length == 0){
+					reject("Einsender "+eins+" existiert nicht!")
+				}
 				if(res[0]['zeichensatz'] != null){
 					var festgeschriebenerZS = res[0]['zeichensatz'];
 					con.log(true, "Der Zeichensatz wurde wegen Standardoutput auf " + festgeschriebenerZS + " gesetzt!");
