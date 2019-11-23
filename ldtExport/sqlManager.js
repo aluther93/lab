@@ -37,7 +37,8 @@ function insertAbgerufeneBefunde(einsender, row){
 				'abgerufenFrom':'notYetImplemented',
 				'ldtVersion':row['ldtVersion'],
 				'content':row['content'],
-				'aeDatum':row['aeDatum']
+				'aeDatum':row['aeDatum'],
+				'quelle':row['quelle']
 			})
 			.then(resolve,reject);
 	});
@@ -50,7 +51,7 @@ function getBefunde(eins, quelle){
 					'eins': eins,
 					'status':'bereit'
 				})
-				.select('content', 'ldtVersion', 'labornr','aeDatum')
+				.select('content', 'ldtVersion', 'labornr','aeDatum', 'quelle')
 				.then(resolve,reject);
 		}else{
 			knex('befunde')
@@ -59,14 +60,15 @@ function getBefunde(eins, quelle){
 					'quelle':quelle,
 					'status':'bereit'
 				})
-				.select('content', 'ldtVersion', 'labornr','aeDatum')
+				.select('content', 'ldtVersion', 'labornr','aeDatum','quelle')
 				.then(resolve,reject);
 		}
 	});
 }
-function selectAbgerufeneBefunde(eins){
+function selectAbgerufeneBefunde(eins, quelle){
 	return new Promise((resolve,reject)=>{
-		knex('abgerufeneBefunde')
+		if(quelle == null){
+			knex('abgerufeneBefunde')
 			.where({
 				'eins': eins
 			})
@@ -78,6 +80,21 @@ function selectAbgerufeneBefunde(eins){
 				}
 				erstelleResult(res).then(resolve,reject)
 			},reject);
+		}else{
+			knex('abgerufeneBefunde')
+			.where({
+				'eins': eins,
+				'quelle':quelle
+			})
+			.select(knex.fn.now(),'content', 'ldtVersion', 'labornr', 'abgerufenAt','aeDatum')
+			.orderBy('abgerufenAt', 'desc')
+			.then((res)=>{
+				if(res.length == 0){
+					reject(" Es liegen keine abrufbaren Befunde vor.")
+				}
+				erstelleResult(res).then(resolve,reject)
+			},reject);
+		}
 	});
 }
 function erstelleResult(rows){
@@ -116,12 +133,13 @@ function selectEinsenderInfo(eins, explicitQuelle){
 				}
 				if(res[0]['zeichensatz'] != null){
 					var festgeschriebenerZS = res[0]['zeichensatz'];
-					con.log(true, "Der Zeichensatz wurde wegen Standardoutput auf " + festgeschriebenerZS + " gesetzt!");
+					con.log(true, " Der Zeichensatz wurde wegen Standardoutput auf " + festgeschriebenerZS + " gesetzt!");
 				}
 				if(explicitQuelle != null){
 					res[0]['quelle'] = explicitQuelle;
 					con.log(true, "Die explizit angegebene Quelle lautet "+explicitQuelle);	
 				}
+				// res[0]['quelle'] ist auch != null wenn explicitQuelle angegeben wurde
 				if(res[0]['quelle'] != null){
 					knex('einsender')
 						.where({'eins': eins, 'quelle': res[0]['quelle']})

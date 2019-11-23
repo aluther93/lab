@@ -74,6 +74,9 @@ var header = null;
 var footer = null;
 var fileName = null;
 var befundeCount = 0;
+var f8300 = null;
+var f0101 = null;
+var f8312 = null;
 
 mainLoop();
 
@@ -148,7 +151,7 @@ function getBefunde(){
 function lookFurtherForBefunde(){
 	return new Promise((resolve,reject)=>{
 		con.log(false, " ! Passende Befunde wurden schon abgerufen ... ");
-		sqlManager.selectAbgerufeneBefunde(einsender).then((res)=>{
+		sqlManager.selectAbgerufeneBefunde(einsender,quelle).then((res)=>{
 			if(res.length == 0){
 				reject("> Es liegen keine bereiten Befunde vor.");
 			}else{
@@ -170,6 +173,9 @@ function getEinsenderInfo(){
 		sqlManager.selectEinsenderInfo(einsender, quelle).then((res)=>{
 			if(typeof res[0] != 'undefined'){
 				zeichensatz = res[0]['zeichensatz'];
+				docBuilder.setHeaderBlueprintException('8300', res[0]['f8300']);
+				docBuilder.setHeaderBlueprintException('8312', res[0]['f8312']);
+				docBuilder.setHeaderBlueprintException('0101', res[0]['f0101']);
 				resolve(res[0]);
 			}else{
 				reject(">>>ERROR: Es konnte kein Einsender gefunden werden ");
@@ -345,6 +351,7 @@ function exitFunction(msg){
 	}
 	else
 	{
+		
 		con.log(2,msg);
 	}
 }

@@ -5,7 +5,8 @@ module.exports = {
 	getPath:getPath,
 	assembleAndCreate:assembleAndCreate,
 	generateFileName:generateFileName,
-	setPath:setPath
+	setPath:setPath,
+	setHeaderBlueprintException:setHeaderBlueprintException
 }
 var rootconfig = require('../rootconfig');
 let fs = require('fs');
@@ -48,7 +49,13 @@ var headerOrder = [
 	'8312',
 	'9103'
 ]
-
+function setHeaderBlueprintException(code, value){
+	if(value == "") return;
+	if(value != null && typeof headerBlueprint[code] != 'undefined'){
+		headerBlueprint[code] = 'f'+code;
+		con.log(true, " Die Labor-Signatur für "+code+" wurde nach SQL-Tabelle auf den Wert: "+value+" gesetzt.");
+	}
+}
 function buildDocHeader(sqlResults){
 	return new Promise((resolve,reject)=>{
 		var documentArr = [];
