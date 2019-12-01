@@ -59,6 +59,11 @@ if(typeof process.argv[3] != 'undefined'){
 }
 einsenderInfo.setQuelle(quelle);
 
+process.on('beforeExit', ()=>{
+	sqlManager.resolveToDo().then(sqlManager.clearToDo,()=>{
+		console.log("oops")
+	})
+});
 process.on('exit', ldtHelper.exitFunction);
 
 rl.on('line', (line)=>{
@@ -242,9 +247,10 @@ function switchLineOperation(line){
 				for(code in befundArten){
 					if(line.includes(code)){
 						if(container != null){
+							container.lineEnd = lineNumber - 1;
 							containerStack.push(container);
 						}
-						container = ldtHelper.produceContainer();
+						container = ldtHelper.produceContainer(lineNumber);
 						container.ldtVersion = ldtVersion;
 						container.newLine = line;
 						container.befArt = code;
@@ -295,6 +301,7 @@ function postResults(container){
 		var stackCopy = containerStack;
 		containerStack = [];
 		if(container != null){
+			container.lineEnd = lineNumber - 1;
 			stackCopy.push(container);
 		}
 

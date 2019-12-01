@@ -13,11 +13,14 @@ module.exports = {
 	getEinsenderFromDB:getEinsenderFromDB,
 	disconnect:disconnect,
 	updateEinsenderInformation:updateEinsenderInformation,
-	updateBefunde:updateBefunde
+	updateBefunde:updateBefunde,
+	resolveToDo:resolveToDo,
+	clearToDo:clearToDo
 }
 
 var openQueries = 0;
 var closingCall = false;
+var toDo = [];
 
 function queryDone(){
 	openQueries--;
@@ -40,6 +43,16 @@ function beginQuery(){
 			});
 			resolve();
 		});
+	})
+}
+function clearToDo(){
+	console.log("cleared")
+	toDo = [];
+}
+function resolveToDo(){
+	return new Promise((resolve,reject)=>{
+		console.log("yo")
+		resolve()
 	})
 }
 function disconnect(){
@@ -158,6 +171,7 @@ function sperreBefunde(containerStack){
 function insertBefunde(containerStack){
 	return new Promise((resolve,reject)=>{
 		beginQuery().then(()=>{
+			var dupEntries = [];
 			var promiseArray = [];
 			for(i in containerStack){
 				var container = containerStack[i];
@@ -180,7 +194,8 @@ function insertBefunde(containerStack){
 				}
 				promiseArray.push(knex('befunde').insert(befundObj).catch((e)=>{
 					if(e['code'] == 'ER_DUP_ENTRY'){
-						con.log(false, " ACHTUNG: In der gelesenen Datei befinden sich Befunde mit mehrfach vergebenem Identifier. Nur einer der Befunde wird in die Datenbank übernommen.");
+						toDo.push(container)
+						con.log(false, "ACHTUNG: Der Container (Dokument-Zeile:"+container.lineStart+"-"+container.lineEnd+") mit der Labornr:"+container['labornr']+" und dem Befundtyp:"+container['befTyp']+" kann nicht in die Datenbank überführt werden.");
 					}else{
 						importHelper.incUnsaveables();
 					}

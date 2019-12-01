@@ -4,6 +4,7 @@ const sqlTemplate = {quelle:null,eins:null,labornr:null,aeDatum:null,status:'ber
 const sqlPrimKey = {quelle:null,eins:null,labornr:null,aeDatum:null, zeit:null};
 const con = require('./consoleLogging');
 
+
 module.exports = {
 	checkSum: checkSum,
 	produceContainer: prodContainer,
@@ -29,7 +30,7 @@ function parseLineToDate(line){
 // Sammlung an Attributen die der Container aus dem Befund-Corpus übernimmt.
 //ldtVersion, befArt und content fallen nicht unter diese Suche
 // Factory für Container Elemente. Container entsprechen SQL Zeilen die noch nicht eingetragen wurden.
-function prodContainer(){
+function prodContainer(lineStart){
 	var container = {
 		labornr:null,
 		aeDatum:null,
@@ -44,6 +45,8 @@ function prodContainer(){
 		befArt:null,
 		zeichensatz:null,
 		ldtVersion:null,
+		lineStart:lineStart,
+		lineEnd:null,
 		content:[],
 		formatContainer:()=>{
 			//var sql = "SELECT * FROM befunde WHERE ";
@@ -92,6 +95,7 @@ function getParsedValue(code, line){
 	return output;
 }
 function exitFunction(msg){
+
 	if(unsaveable > 0){
 		msg0 = "> " + unsaveable;
 		if(unsaveable == 1){
