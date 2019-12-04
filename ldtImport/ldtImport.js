@@ -59,11 +59,6 @@ if(typeof process.argv[3] != 'undefined'){
 }
 einsenderInfo.setQuelle(quelle);
 
-process.on('beforeExit', ()=>{
-	sqlManager.resolveToDo().then(sqlManager.clearToDo,()=>{
-		console.log("oops")
-	})
-});
 process.on('exit', ldtHelper.exitFunction);
 
 rl.on('line', (line)=>{
@@ -185,9 +180,11 @@ function switchLineOperation(line){
 				processName = "L-Abschluss";
 				einsenderInfo.newContainer().then(()=>{
 					con.log(false,enrolledQuellkuerzel);
-					postResults(container).then(()=>{
+					postResults(container).then((e)=>{
 						container = null;
-						resolve()
+						sqlManager.handleToDo().then(()=>{
+							resolve(e)
+						},reject);
 					},reject);
 					
 					
@@ -204,7 +201,9 @@ function switchLineOperation(line){
 				einsenderInfo.newContainer().then(()=>{
 					postResults(container).then((e)=>{
 						container = null;
-						resolve(e)
+						sqlManager.handleToDo().then(()=>{
+							resolve(e)
+						},reject);
 					},reject);
 					
 					

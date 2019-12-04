@@ -14,8 +14,7 @@ module.exports = {
 	disconnect:disconnect,
 	updateEinsenderInformation:updateEinsenderInformation,
 	updateBefunde:updateBefunde,
-	resolveToDo:resolveToDo,
-	clearToDo:clearToDo
+	handleToDo:handleToDo
 }
 
 var openQueries = 0;
@@ -43,16 +42,6 @@ function beginQuery(){
 			});
 			resolve();
 		});
-	})
-}
-function clearToDo(){
-	console.log("cleared")
-	toDo = [];
-}
-function resolveToDo(){
-	return new Promise((resolve,reject)=>{
-		console.log("yo")
-		resolve()
 	})
 }
 function disconnect(){
@@ -171,9 +160,8 @@ function sperreBefunde(containerStack){
 function insertBefunde(containerStack){
 	return new Promise((resolve,reject)=>{
 		beginQuery().then(()=>{
-			var dupEntries = [];
 			var promiseArray = [];
-			for(i in containerStack){
+			for(var i in containerStack){
 				var container = containerStack[i];
 				var befundObj = {
 					'quelle': container['quelle'],
@@ -194,7 +182,17 @@ function insertBefunde(containerStack){
 				}
 				promiseArray.push(knex('befunde').insert(befundObj).catch((e)=>{
 					if(e['code'] == 'ER_DUP_ENTRY'){
-						toDo.push(container)
+						
+						var hit = false;
+						for(var x in toDo){
+							if(toDo[x] == container){
+								toDo[x] = container;
+								hit = true;
+							}
+						} 
+						if(!hit){
+							toDo.push(container);
+						}
 						con.log(false, "ACHTUNG: Der Container (Dokument-Zeile:"+container.lineStart+"-"+container.lineEnd+") mit der Labornr:"+container['labornr']+" und dem Befundtyp:"+container['befTyp']+" kann nicht in die Datenbank überführt werden.");
 					}else{
 						importHelper.incUnsaveables();
@@ -204,11 +202,61 @@ function insertBefunde(containerStack){
 			}
 			Promise.all(promiseArray).then((e)=>{
 							queryDone();
-							resolve(e);
+							resolve(e)
 						},(e)=>{
+							con.log(2, e)
 							queryDone();
 							reject(e);
 						})
 		},reject)
+	});
+}
+function handleToDo(){
+	return new Promise((resolve,reject)=>{
+		if(toDo.length == 0){
+			resolve();
+		}else{
+			var toDoCopy = toDo;
+			toDo = [];
+			// Statt UpdateBefunde ForceUpdate (bzw ein tatsächliches update statt insert ) oder Replace ...
+			beginQuery().then(()=>{
+			var promiseArray = [];
+			for(var i in toDoCopy){
+				var container = toDoCopy[i];
+				var befundObj = {
+					'quelle': container['quelle'],
+					'eins': container['eins'],
+					'aeDatum' : container['aeDatum'],
+					'vorsatz': container['vorsatz'],
+					'zeit': knex.fn.now(),
+					'orgid': container['orgid'],
+					'labornr':container['labornr'],
+					'status': 'bereit',
+					'befArt':container['befArt'],
+					'befTyp':container['befTyp'],
+					'name':container['name'],
+					'vorname':container['vorname'],
+					'gebTag':container['gebTag'],
+					'ldtVersion':container['ldtVersion'],
+					'content':container['content'].join(',')
+				}
+			    var query = knex('befunde').insert(befundObj).toString()
+			    var newTS = 'TIMESTAMPADD(MINUTE, 1, CURRENT_TIMESTAMP)';
+			    query = query.replace('CURRENT_TIMESTAMP', newTS);
+				promiseArray.push(knex.raw(query).catch((e)=>{
+					con.log(2," Befund von Zeile: "+container.lineStart+'-'+container.lineEnd+' wurde mit ErrorCode '+e['code']+' nicht in die Datenbak überführt.')
+					importHelper.incUnsaveables();
+					importHelper.decTotalPaketsRead();
+				}))
+			}
+			Promise.all(promiseArray).then((e)=>{
+							queryDone();
+							resolve(e)
+						},(e)=>{
+							queryDone();
+							reject(e);
+						})
+			},reject)
+		}
 	});
 }
