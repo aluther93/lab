@@ -138,6 +138,7 @@ function sperreBefunde(containerStack){
 			var promiseArray = [];
 			for(i in containerStack){
 				var container = containerStack[i];
+				var type = container['befTyp']//Befundtyp "V", "E" oder "N"
 				var sperrBedingung = {
 					'quelle': container['quelle'],
 					'eins': container['eins'],
@@ -145,7 +146,16 @@ function sperreBefunde(containerStack){
 					'aeDatum' : container['aeDatum'],
 					'status' : 'bereit'
 				}
-				promiseArray.push(knex('befunde').where(sperrBedingung).update({'status':'gesperrt'}))
+				if(type == 'V'){
+					sperrBedingung['befTyp'] = 'V'
+					promiseArray.push(knex('befunde').where(sperrBedingung).update({'status':'gesperrt'}))
+				}
+				if(type == 'E'){
+					sperrBedingung['befTyp'] = 'V';
+					promiseArray.push(knex('befunde').where(sperrBedingung).update({'status':'gesperrt'}))
+					sperrBedingung['befTyp'] = 'E';
+					promiseArray.push(knex('befunde').where(sperrBedingung).update({'status':'gesperrt'}))
+				}
 			}
 			Promise.all(promiseArray).then((e)=>{
 							queryDone();
@@ -241,7 +251,7 @@ function handleToDo(){
 					'content':container['content'].join(',')
 				}
 			    var query = knex('befunde').insert(befundObj).toString()
-			    var newTS = 'TIMESTAMPADD(MINUTE, 1, CURRENT_TIMESTAMP)';
+			    var newTS = 'TIMESTAMPADD(SECOND, 1, CURRENT_TIMESTAMP)';
 			    query = query.replace('CURRENT_TIMESTAMP', newTS);
 				promiseArray.push(knex.raw(query).catch((e)=>{
 					con.log(2," Befund von Zeile: "+container.lineStart+'-'+container.lineEnd+' wurde mit ErrorCode '+e['code']+' nicht in die Datenbak überführt.')
