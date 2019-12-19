@@ -122,7 +122,20 @@ function updateEinsenderInformation(einsInfo){
 }
 function updateBefunde(containerStack){
 	return new Promise((resolve,reject)=>{
-		sperreBefunde(containerStack).then(()=>{
+		sperreBefunde(containerStack).then((e)=>{
+			
+			//Resolve kann Objekte enthalten die gegebenenfalls aus dem Containerstack entfernt werden müssen.
+			for(var k in e){
+				if(typeof e[k] == 'object'){
+					var containerToDelete = e[k]['obj']
+					for(var l in containerStack){
+						if(containerStack[l] == containerToDelete){
+							delete containerStack[l];
+						}
+					}
+				}
+			}
+
 			insertBefunde(containerStack).then(()=>{
 				for(i in containerStack){
 					importHelper.incTotalPaketsRead();
@@ -146,10 +159,22 @@ function sperreBefunde(containerStack){
 					'aeDatum' : container['aeDatum'],
 					'status' : 'bereit'
 				}
+
+				// Handling für Vorbefunde
 				if(type == 'V'){
 					sperrBedingung['befTyp'] = 'V'
-					promiseArray.push(knex('befunde').where(sperrBedingung).update({'status':'gesperrt'}))
+					promiseArray.push(knex('befunde').where(sperrBedingung).update({'status':'gesperrt'}).then(()=>{return "Yo"},()=>{return "No"}))
+					
+					// Falls es schon einen Endbefund gib, erscheint im Resolve ein Objekt welches nicht eingefügt werden soll
+					sperrBedingung['befTyp'] = 'E'
+					promiseArray.push(knex('befunde').where(sperrBedingung).then((rows)=>{
+						if(rows.length > 0){
+							return {"obj":container};
+						}
+					},()=>{return "ERROR"}));
 				}
+
+				//Handling für Endbefunde
 				if(type == 'E'){
 					sperrBedingung['befTyp'] = 'V';
 					promiseArray.push(knex('befunde').where(sperrBedingung).update({'status':'gesperrt'}))
@@ -192,11 +217,13 @@ function insertBefunde(containerStack){
 				}
 				promiseArray.push(knex('befunde').insert(befundObj).catch((e)=>{
 					if(e['code'] == 'ER_DUP_ENTRY'){
+					
+					//bissele reverse sql
+					console.log(e.sql)
 						
 						var hit = false;
 						for(var x in toDo){
 							if(toDo[x] == container){
-								toDo[x] = container;
 								hit = true;
 							}
 						} 
