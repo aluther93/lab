@@ -127,10 +127,12 @@ function updateBefunde(containerStack){
 			//Resolve kann Objekte enthalten die gegebenenfalls aus dem Containerstack entfernt werden müssen.
 			for(var k in e){
 				if(typeof e[k] == 'object'){
-					var containerToDelete = e[k]['obj']
+					var labNrToDelete = e[k]['labornr']
 					for(var l in containerStack){
-						if(containerStack[l] == containerToDelete){
+						if(containerStack[l]['labornr'] == labNrToDelete && containerStack[l]['befTyp'] == e[k]['befTyp'] ){
+							con.log(0,"Befund mit Labornummer: " + labNrToDelete + " ist vom Typ " + e[k]['befTyp'] + " und wird nicht in Datenbank übernommen. (Endbefund liegt bereits vor)")
 							delete containerStack[l];
+							l = l - 1
 						}
 					}
 				}
@@ -149,7 +151,7 @@ function sperreBefunde(containerStack){
 	return new Promise((resolve,reject)=>{
 		beginQuery().then(()=>{
 			var promiseArray = [];
-			for(i in containerStack){
+			for(var i in containerStack){
 				var container = containerStack[i];
 				var type = container['befTyp']//Befundtyp "V", "E" oder "N"
 				var sperrBedingung = {
@@ -169,7 +171,7 @@ function sperreBefunde(containerStack){
 					sperrBedingung['befTyp'] = 'E'
 					promiseArray.push(knex('befunde').where(sperrBedingung).then((rows)=>{
 						if(rows.length > 0){
-							return {"obj":container};
+							return {"labornr":rows[0]['labornr'], "befTyp": 'V'};
 						}
 					},()=>{return "ERROR"}));
 				}
@@ -219,22 +221,22 @@ function insertBefunde(containerStack){
 					if(e['code'] == 'ER_DUP_ENTRY'){
 					
 					//bissele reverse sql
-					console.log(e.sql)
+					//retrieveObjectFromSqlInsertQuery(e.sql)
 						
 						var hit = false;
 						for(var x in toDo){
-							if(toDo[x] == container){
+							if(toDo[x] == e.sql){
 								hit = true;
 							}
 						} 
 						if(!hit){
-							toDo.push(container);
+							toDo.push(e.sql);
 						}
-						con.log(false, "ACHTUNG: Der Container (Dokument-Zeile:"+container.lineStart+"-"+container.lineEnd+") mit der Labornr:"+container['labornr']+" und dem Befundtyp:"+container['befTyp']+" kann nicht in die Datenbank überführt werden.");
+						con.log(false, "ACHTUNG: Der Container (Dokument-Zeile:"+container.lineStart+"-"+container.lineEnd+") wurde nicht vollständig in Datenbank übernommen");
+						con.log(1,"Neuer Versuch wird mit Abschluss des Befundes eingeleitet.")
 					}else{
 						importHelper.incUnsaveables();
 					}
-					importHelper.decTotalPaketsRead();
 				}))
 			}
 			Promise.all(promiseArray).then((e)=>{
@@ -259,29 +261,11 @@ function handleToDo(){
 			beginQuery().then(()=>{
 			var promiseArray = [];
 			for(var i in toDoCopy){
-				var container = toDoCopy[i];
-				var befundObj = {
-					'quelle': container['quelle'],
-					'eins': container['eins'],
-					'aeDatum' : container['aeDatum'],
-					'vorsatz': container['vorsatz'],
-					'zeit': knex.fn.now(),
-					'orgid': container['orgid'],
-					'labornr':container['labornr'],
-					'status': 'bereit',
-					'befArt':container['befArt'],
-					'befTyp':container['befTyp'],
-					'name':container['name'],
-					'vorname':container['vorname'],
-					'gebTag':container['gebTag'],
-					'ldtVersion':container['ldtVersion'],
-					'content':container['content'].join(',')
-				}
-			    var query = knex('befunde').insert(befundObj).toString()
+				var query = toDoCopy[i];
 			    var newTS = 'TIMESTAMPADD(SECOND, 1, CURRENT_TIMESTAMP)';
 			    query = query.replace('CURRENT_TIMESTAMP', newTS);
 				promiseArray.push(knex.raw(query).catch((e)=>{
-					con.log(2," Befund von Zeile: "+container.lineStart+'-'+container.lineEnd+' wurde mit ErrorCode '+e['code']+' nicht in die Datenbak überführt.')
+					con.log(2," Befund von Zeile: "+container.lineStart+'-'+container.lineEnd+' wurde mit ErrorCode '+e['code']+' nicht in die Datenbank überführt.')
 					importHelper.incUnsaveables();
 					importHelper.decTotalPaketsRead();
 				}))

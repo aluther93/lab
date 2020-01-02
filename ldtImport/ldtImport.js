@@ -179,7 +179,6 @@ function switchLineOperation(line){
 				processState = "footer";
 				processName = "L-Abschluss";
 				einsenderInfo.newContainer().then(()=>{
-					con.log(false,enrolledQuellkuerzel);
 					postResults(container).then((e)=>{
 						container = null;
 						sqlManager.handleToDo().then(()=>{
@@ -298,6 +297,11 @@ function postResults(container){
 		var quellkuerzel = enrolledQuellkuerzel.shift();
 		var zeichensatz = enrolledZeichensatz.shift();
 		var stackCopy = containerStack;
+		if(typeof containerStack[0] != 'undefined'){
+			var containerStackStartLine = containerStack[0].lineStart;
+		}else{
+			var containerStackStartLine = container.lineStart;
+		}
 		containerStack = [];
 		if(container != null){
 			container.lineEnd = lineNumber - 1;
@@ -325,7 +329,7 @@ function postResults(container){
 				const einsInfoResponse = sqlManager.updateEinsenderInformation(einsenderInfo.getNextEinsenderInformationContainer(eins));
 				const befundeResponse = sqlManager.updateBefunde(stackCopy);
 				Promise.all([einsInfoResponse, befundeResponse]).then(()=>{
-					con.log(false,"Container erfolgreich verarbeitet");
+					con.log(false,"Container erfolgreich verarbeitet || Dokumentzeile: "+containerStackStartLine+"-"+container.lineEnd);
 					resolve();
 				},(e)=>{
 					con.log(2, "Container wurde nicht vollständig in die Datenbank überführt.");
