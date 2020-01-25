@@ -64,7 +64,6 @@ process.on('exit', ldtHelper.exitFunction);
 rl.on('line', (line)=>{
 	enrolledInputLine.push(line);
 	findEncoding(line);
-
 	if(enrolledZeichensatz.length > 0){
 		trySetRunning().then(()=>{
 			con.log(true, "Die Festgestellten Zeichensätze sind " + enrolledZeichensatz);
@@ -229,6 +228,7 @@ function switchLineOperation(line){
 				if(processState == 'header'){
 					splitLine = line.split('8312');
 					quellkuerzel = splitLine[1];
+					console.log(quellkuerzel)
 					enrolledQuellkuerzel.push(quellkuerzel);
 					con.log(true, "->> Quellkürzel ist: " + quellkuerzel + " ... (Zeile " + lineNumber + ")");
 					con.log(true, false, "--------------------------------------------------")

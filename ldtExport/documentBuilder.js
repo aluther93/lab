@@ -31,7 +31,7 @@ var headerBlueprint = {
 	'8300': getLaborSig,
 	'0101': getLaborSig,
 	'9106':'zeichensatz',
-	'8312': getLaborSig,
+	'8312': 'eins',
 	'9103':'datum'
 };
 var headerOrder = [
@@ -56,14 +56,18 @@ function setHeaderBlueprintException(code, value){
 		con.log(true, " Die Labor-Signatur für "+code+" wurde nach SQL-Tabelle auf den Wert: "+value+" gesetzt.");
 	}
 }
-function buildDocHeader(sqlResults){
+function buildDocHeader(sqlResults, zeichensatz){
 	return new Promise((resolve,reject)=>{
+		zeichensatzIdent = zeichensatz;
 		var documentArr = [];
 		var code = '';
 		for(i in headerOrder){
 			code = headerOrder[i]
 			if(typeof headerBlueprint[code] != 'undefined'){
-				documentArr.push(buildHeaderLine(code, sqlResults));
+				var content = buildHeaderLine(code, sqlResults)
+				if(content){
+					documentArr.push(content);
+				}
 			}
 		}
 		resolve(documentArr);
@@ -74,11 +78,16 @@ function buildHeaderLine(code, sqlResults){
 	var instruction = headerBlueprint[code];
 	if(typeof instruction == 'function'){
 		var wort = instruction(code);
-		satz = String(code) + String(wort);
-		return getBytesNeeded(satz) + satz + stop();
+		if(wort){
+			satz = String(code) + String(wort);
+			return getBytesNeeded(satz) + satz + stop();
+		}else{
+			return false;
+		}
 	}else{
 		if(instruction == 'zeichensatz'){
-			zeichensatzIdent = sqlResults[instruction];
+			satz = String(code) + zeichensatzIdent;
+			return getBytesNeeded(satz) + satz + stop();
 		}
 		if(instruction == 'satzlänge'){
 			return bestimmeBlockLänge;
@@ -356,7 +365,9 @@ function checkLineForCode(line, code){
 }
 function getLaborSig(code){
 	if(typeof rootconfig.labSignatur[code] == 'undefined'){
-		process.exit("Eine zwingend erforderliche Zeile wurde nicht in der RootConfig-Datei deklariert. Zeile mit Code:'"+code+"' ist nicht definiert.")
+		con.log(0, ">> ACHTUNG: Für den Wert "+code+" existiert keine Regel in Rootconfig/Sql-Tabelle(Einsender). Zeile wird nicht geschrieben.")
+		return false;
+	}else{
+		return rootconfig.labSignatur[code];
 	}
-	return rootconfig.labSignatur[code];
 }

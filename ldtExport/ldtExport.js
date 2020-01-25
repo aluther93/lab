@@ -118,7 +118,7 @@ function showStorage(){
 function sendContainer(){
 	return new Promise((resolve,reject)=>{
 		con.log(true," CONTAINER wird gesendet ")
-		docBuilder.buildDocHeader(container).then(resolve, reject);	
+		docBuilder.buildDocHeader(container, String(zeichensatz)).then(resolve, reject);	
 	})
 }
 function packContainer(){
