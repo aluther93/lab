@@ -228,7 +228,6 @@ function switchLineOperation(line){
 				if(processState == 'header'){
 					splitLine = line.split('8312');
 					quellkuerzel = splitLine[1];
-					console.log(quellkuerzel)
 					enrolledQuellkuerzel.push(quellkuerzel);
 					con.log(true, "->> Quellkürzel ist: " + quellkuerzel + " ... (Zeile " + lineNumber + ")");
 					con.log(true, false, "--------------------------------------------------")

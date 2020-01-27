@@ -29,6 +29,8 @@ function disconnect(){
 }
 function insertAbgerufeneBefunde(einsender, row){
 	return new Promise((resolve,reject)=>{
+		console.log()
+		//process.exit()
 		knex('abgerufeneBefunde')
 			.insert({
 				'eins':einsender,

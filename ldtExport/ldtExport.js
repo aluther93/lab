@@ -96,7 +96,7 @@ function mainLoop(args){
 function createFile(){
 	return new Promise((resolve,reject)=>{		
 		docBuilder.assembleAndCreate(header, body, fileName, zeichensatz).then(()=>{
-			con.log(false," FILE wurde erfolgreich ERSTELLT");
+			con.log(1," FILE wurde erfolgreich ERSTELLT");
 			resolve();
 		}, reject);
 	});
@@ -132,17 +132,31 @@ function packContainer(){
 function getBefunde(){
 	return new Promise((resolve,reject)=>{
 		sqlManager.getBefunde(einsender, quelle).then((res)=>{
+			var befundChroniken = [] //manche Endbefunde werden gemeinsam mit Nachbefunden abgerufen ... deren Content wird aneinander gehangen (immer noch 2 Befunde, aber ein Header, Footer).
 			if(res.length == 0){
 				squeezeIntoProcessChain(lookFurtherForBefunde).then(resolve,reject);
 			}else{
 				var promiseArray = [];
-				for(i in res){
+				for(var i in res){
 					befundeCount ++;
-					promiseArray.push(sqlManager.insertAbgerufeneBefunde(einsender, res[i]));
-					
+					var alreadySet = false;
+					for(var j in befundChroniken){
+						if(befundChroniken[j].labornr == res[i].labornr){
+							alreadySet = true;
+							befundChroniken[j]['content'] = befundChroniken[j]['content'] +','+ res[i]['content']
+						}
+						break;
+					}
+					if(!alreadySet){
+						befundChroniken.push(res[i])
+					}	
 				}
+				for(var i in befundChroniken){
+					promiseArray.push(sqlManager.insertAbgerufeneBefunde(einsender, befundChroniken[i]));
+				}
+
 				Promise.all(promiseArray).then(()=>{
-					resolve(processQueryResultBefunde(res))
+					resolve(processQueryResultBefunde(befundChroniken))
 				},reject);
 			}
 		}, reject);	
@@ -235,6 +249,8 @@ function processQueryResultBefunde(rows){
 		for(type in rows[i]){
 			switch(true){
 				case type == 'labornr':
+					break;
+				case type == 'aeDatum':
 					break;
 				case type == 'content':
 					processedResult['content'].push(rows[i]['content']);

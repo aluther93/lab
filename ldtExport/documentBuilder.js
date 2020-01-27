@@ -31,7 +31,7 @@ var headerBlueprint = {
 	'8300': getLaborSig,
 	'0101': getLaborSig,
 	'9106':'zeichensatz',
-	'8312': 'eins',
+	'8312': 'kundenNr',
 	'9103':'datum'
 };
 var headerOrder = [

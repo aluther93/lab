@@ -93,7 +93,6 @@ function updateEinsenderInformation(einsInfo){
 			.then(res => {
 				queryDone()
 				if(res.length == 0){
-					console.log(einsInfo);
 					knex('einsender')
 						.insert(einsInfo)
 						.then((e)=>{
@@ -130,7 +129,7 @@ function updateBefunde(containerStack){
 					var labNrToDelete = e[k]['labornr']
 					for(var l in containerStack){
 						if(containerStack[l]['labornr'] == labNrToDelete && containerStack[l]['befTyp'] == e[k]['befTyp'] ){
-							con.log(0,"Befund mit Labornummer: " + labNrToDelete + " ist vom Typ " + e[k]['befTyp'] + " und wird nicht in Datenbank übernommen. (Endbefund liegt bereits vor)")
+							con.log(2,"Endbefund liegt bereits vor: Befund mit Labornummer " + labNrToDelete + " ist vom Typ " + e[k]['befTyp'] + " und wird nicht in Datenbank übernommen. Zeile: "+containerStack[l].lineStart+"-"+containerStack[l].lineEnd+".")
 							delete containerStack[l];
 							l = l - 1
 						}
@@ -232,9 +231,10 @@ function insertBefunde(containerStack){
 						if(!hit){
 							toDo.push(e.sql);
 						}
-						con.log(false, "ACHTUNG: Der Container (Dokument-Zeile:"+container.lineStart+"-"+container.lineEnd+") wurde nicht vollständig in Datenbank übernommen");
+						con.log(1, "ACHTUNG: Die ImportDatei enthält mehrere Einträge ähnlich zu (Dokument-Zeile:"+container.lineStart+"-"+container.lineEnd+")");
 						con.log(1,"Neuer Versuch wird mit Abschluss des Befundes eingeleitet.")
 					}else{
+						con.log(false, "ACHTUNG: Der Container (Dokument-Zeile:"+container.lineStart+"-"+container.lineEnd+") wurde nicht vollständig in Datenbank übernommen");
 						importHelper.incUnsaveables();
 					}
 				}))
