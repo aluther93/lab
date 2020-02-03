@@ -113,8 +113,8 @@ function exitFunction(msg){
 			msg1 = "> " + totalPaketsRead + " Befunde wurden"
 		}
 		msg1 = msg1 + " Erfolgreich importiert.";
-		con.log(false,msg1);
-		con.log(false, "> Befunde für User: " + users)
+		con.log(2,msg1);
+		con.log(2, "> Befunde für Einsender: " + users)
 	}else{
 		con.log(2,msg);
 	}

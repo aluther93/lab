@@ -7,11 +7,11 @@
 (x) Wenn mehrere gleiche Identifier bei den BEfunden vergeben sind soll der LETZTE in die DB überführt werden. Bei dem Fall dass eine WARNUNG ausgegeben wird sollen auch Information zu dem BEfund geliefert werden (benutze REPLACE)
 (x) FORCEUPDATE für HandleTodo
 (x) BefundTyp (V = Vorbefund, N = Nachmeldung, E = Endbefund) (4. Zustand) E überschreibt E und V, N überschreibt nichts (auch nicht N) Lösung für das Problem mehrere N oder E kommen gleichzeitig in die DB (also selber Primärschlüssel)
-( ) "ACHTtung aeDatum der Befunde unterschieden sich" überarbeiten
-( ) Wenn er Pfad in der rootConfig ohne "/" am Ende angegeben wird ändert sich der Dateiname dementsprechend (path.resolve)
+(x) "ACHTtung aeDatum der Befunde unterschieden sich" überarbeiten
+(x) Beim logging ZEILE!!!!
+(x) absoluten pfad errechnen/ angeben können
+(x) Wenn er Pfad in der rootConfig ohne "/" am Ende angegeben wird ändert sich der Dateiname dementsprechend (path.resolve)
 ( ) Alle Befund und Einsenderfelder haben in der Docu eine feste maximale Länge (Feldtabelle) -> DB Felder updaten
-( ) absoluten pfad errechnen/ angeben können
-( ) Beim logging ZEILE!!!!
 ( ) https://codeburst.io/javascript-error-messages-debugging-d23f84f0ae7c // für Line ausgabe bei Error
 
 ------------------------------------------------------------------------------------------------

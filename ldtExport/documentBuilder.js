@@ -12,7 +12,9 @@ var rootconfig = require('../rootconfig');
 let fs = require('fs');
 let con = require('./consoleLogging');
 var ctt = require('./codeTableTranslator');
-var ldtHelper = require('./ldtExportHelper')
+var ldtHelper = require('./ldtExportHelper');
+const pathNode = require('path');
+
 
 var finalFileName = null;
 var path = null;
@@ -98,8 +100,22 @@ function buildHeaderLine(code, sqlResults){
 		}
 	}
 }
+function appendBackslash(x){
+	if(x[x.length - 1] == '\\'){
+		return x;
+	}else{
+		return x + '\\';		
+	}
+
+}
 function setPath(value){
-	path = value;
+	var setValue = value;
+	if(pathNode.isAbsolute(value)){
+		path = appendBackslash(setValue);
+	}else{
+		path = pathNode.resolve(pathNode.resolve(), setValue);
+		path = appendBackslash(path);
+	}
 }
 
 function istFeldkennzeichnung(line, fk){
@@ -170,7 +186,8 @@ function bestimmeGesamtLänge(header,body,footer){
 function getPath(){
 	return new Promise((resolve,reject)=>{
 		if(path == null){
-			path = rootconfig.exportPath;
+			path = pathNode.resolve(pathNode.resolve(), rootconfig.exportPath);
+			path = appendBackslash(path);
 		}
 		isValidPath(path).then(resolve,reject);
 	});
