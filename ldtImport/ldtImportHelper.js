@@ -114,7 +114,9 @@ function exitFunction(msg){
 		}
 		msg1 = msg1 + " Erfolgreich importiert.";
 		con.log(2,msg1);
-		con.log(2, "> Befunde für Einsender: " + users)
+		if(users.length > 0){
+			con.log(2, "> Befunde für Einsender: " + users)
+		}
 	}else{
 		con.log(2,msg);
 	}

@@ -314,29 +314,31 @@ function postResults(container){
 		sqlManager.getEinsenderFromDB(quelle, quellkuerzel).then(res => {
 			if(res.length == 1){
 				var eins = res[0];
-			}else{
-				process.exit('Für die Kombination '+quelle+'/'+quellkuerzel+' wurden ' + res.length + " Einträge in Mappings gefunden");
-			}
-			for(i in stackCopy){
-				if(stackCopy[i] != null){
-					stackCopy[i]['eins'] = eins;
-					stackCopy[i]['zeichensatz'] = zeichensatz; 
-					ldtHelper.incUsers(eins);
+				for(i in stackCopy){
+					if(stackCopy[i] != null){
+						stackCopy[i]['eins'] = eins;
+						stackCopy[i]['zeichensatz'] = zeichensatz; 
+						ldtHelper.incUsers(eins);
+					}
 				}
-			}
-			try{
-				const einsInfoResponse = sqlManager.updateEinsenderInformation(einsenderInfo.getNextEinsenderInformationContainer(eins));
-				const befundeResponse = sqlManager.updateBefunde(stackCopy);
-				Promise.all([einsInfoResponse, befundeResponse]).then(()=>{
-					con.log(false,"Container erfolgreich verarbeitet || Dokumentzeile: "+containerStackStartLine+"-"+container.lineEnd);
-					resolve();
-				},(e)=>{
-					con.log(2, "Container wurde nicht vollständig in die Datenbank überführt.");
-					con.log(2, ">>ERROR: " + e)
-					resolve()
-				})
-			}catch(e){
-				reject(e);
+				try{
+					const einsInfoResponse = sqlManager.updateEinsenderInformation(einsenderInfo.getNextEinsenderInformationContainer(eins));
+					const befundeResponse = sqlManager.updateBefunde(stackCopy);
+					Promise.all([einsInfoResponse, befundeResponse]).then(()=>{
+						con.log(false,"Befundcontainer erfolgreich verarbeitet || Dokumentzeile: "+containerStackStartLine+"-"+container.lineEnd);
+						resolve();
+					},(e)=>{
+						con.log(2, "Container wurde nicht vollständig in die Datenbank überführt.");
+						con.log(2, ">>ERROR: " + e)
+						resolve()
+					})
+				}catch(e){
+					reject(e);
+				}
+			}else{
+				con.log(2, 'Für die Kombination '+quelle+'/'+quellkuerzel+' wurden ' + res.length + ' Einträge in Mappings gefunden');
+				ldtHelper.incUnsaveables();
+				resolve();
 			}
 		});
 	});

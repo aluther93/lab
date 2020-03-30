@@ -100,21 +100,13 @@ function buildHeaderLine(code, sqlResults){
 		}
 	}
 }
-function appendBackslash(x){
-	if(x[x.length - 1] == '\\'){
-		return x;
-	}else{
-		return x + '\\';		
-	}
 
-}
 function setPath(value){
 	var setValue = value;
 	if(pathNode.isAbsolute(value)){
-		path = appendBackslash(setValue);
+		path = pathNode.resolve(setValue)
 	}else{
 		path = pathNode.resolve(pathNode.resolve(), setValue);
-		path = appendBackslash(path);
 	}
 }
 
@@ -187,7 +179,6 @@ function getPath(){
 	return new Promise((resolve,reject)=>{
 		if(path == null){
 			path = pathNode.resolve(pathNode.resolve(), rootconfig.exportPath);
-			path = appendBackslash(path);
 		}
 		isValidPath(path).then(resolve,reject);
 	});
@@ -317,7 +308,7 @@ function generateFileName(){
 		}
 		fileName = fileName + "01";
 		var tempName = fileName + makeid(6) + ".ldt";
-		var tempPath = path  + tempName;
+		var tempPath = pathNode.resolve(path, tempName)
 		var freeNameSpace = fs.access(tempPath, fs.F_OK, (err)=>{
 			if(err){
 				if(err.code == 'ENOENT'){
