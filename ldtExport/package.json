@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^5.0.0",
-    "knex": "^0.19.4",
+    "knex": "^0.19.5",
     "legacy": "0.0.3",
     "legacy-encoding": "^3.0.0",
     "mysql": "^2.17.1",
