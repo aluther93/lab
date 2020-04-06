@@ -5,9 +5,25 @@ const einsenderInfo = require('./einsenderInfo');
 const con = require('./consoleLogging');
 var readline = require('readline');
 var ctt = require('./codeTableTranslator');
+const { program } = require('commander');
+
+process.on('exit', ldtHelper.exitFunction);
+
+program
+	.option('-q, --quelle <value>', 'Quelle der LDT-Datei')
+	.option('-r, --routine', 'Minimaler Consolenoutput')
+	.option('-v, --verbose','Ausführlicher Consolenoutput (Debugging)')
+	.parse(process.argv);
+
+if(program.quelle){
+	var quelle = program.quelle;
+}else{
+	process.exit(">> ERROR: Es wurde keine Quelle angegeben.");
+}
+if(program.routine) con.setRoutine();
+if(program.verbose) con.setVerbose();
 
 var quellkuerzel;
-
 var readArray = [];
 var i = 0;
 var bool = true;
@@ -32,34 +48,8 @@ var rl = readline.createInterface({
   terminal: false
 });
 
-
-if(typeof process.argv[2] == 'undefined'){
-	process.exit(">>ERROR: Bitte geben Sie eine Quelle an.");
-}
-if(typeof process.argv[3] != 'undefined'){
-	var localArgs = process.argv;
-	localArgs.shift();
-	localArgs.shift();
-	if(localArgs.includes('-v') || localArgs.includes('-verbose')){
-		con.setVerbose()
-	}
-	if(localArgs.includes('-r') || localArgs.includes('-routine')){
-		con.setRoutine()
-	}
-	for(i in localArgs){
-		if(localArgs[i].charAt(0) != '-'){
-			var quelle = localArgs[i];
-		}
-	}
-	if(typeof quelle == 'undefined'){
-		process.exit(">>ERROR: Das Quellkürzel ist nicht definiert.")
-	}
-}else{
-		var quelle = process.argv[2];
-}
 einsenderInfo.setQuelle(quelle);
 
-process.on('exit', ldtHelper.exitFunction);
 
 rl.on('line', (line)=>{
 	enrolledInputLine.push(line);

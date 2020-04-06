@@ -8,6 +8,7 @@ var routine = false;
 function setVerbose(){
 	return new Promise((resolve,reject)=>{
 		verbose = true;
+		routine = false;
 		if(verbose == true){
 		 resolve();
 		}else{

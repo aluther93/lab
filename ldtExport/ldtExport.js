@@ -2,51 +2,26 @@ var con = require('./consoleLogging');
 var docBuilder = require('./documentBuilder');
 var exportHelper = require('./ldtExportHelper');
 var sqlManager = require('./sqlManager');
+const { program } = require('commander');
 
 process.on('exit', exitFunction);
-	
-var path = null;
-var einsender = null;
-var quelle = null;
-var argArray = process.argv;
-var zeichensatz = null;
 
-argArray.shift();
-argArray.shift();
-
-for(i in argArray){
-	switch(argArray[i].charAt(0)){
-		case '.':
-			if(path == null){
-				path = argArray[i];
-				if(path.slice(-1) != '/') path = path + '/'
-				docBuilder.setPath(path);
-			}else{
-				process.exit(">>ERROR: Es wurden mehrere Pfade angegeben")
-			}
-			break;
-		case '-':
-			if(argArray[i] == '-v' || argArray[i] == '-verbose'){
-				con.setVerbose();
-			}
-			if(argArray[i] == '-r' || argArray[i] == '-routine'){
-				con.setRoutine();
-			}
-			break;
-		default:
-			if(einsender == null){
-				einsender = argArray[i];
-				if(einsender.includes("+")){
-					var tempSplitArray = einsender.split("+")
-					einsender = tempSplitArray[0];
-					quelle = tempSplitArray[1];
-				}
-			}else{
-				process.exit(">>ERROR: Einsender kann nicht eindeutig identifiziert werden.")
-			}
-			break;
-	}
+program
+	.option('-p, --path <value>', 'Fileoutput Path')
+	.option('-e, --einsender <value>', 'Einsender dessen aktuelle Befunde exportiert werden sollen.')
+	.option('-q, --quelle <value>', 'Quelle um Einsender noch genauer zu adressieren')
+	.option('-r, --routine', 'Minimaler Consolenoutput')
+	.option('-v, --verbose','Ausführlicher Consolenoutput (Debugging)')
+	.parse(process.argv);
+if(program.path) docBuilder.setPath(program.path);
+if(program.einsender){
+	var einsender = program.einsender;
+}else{
+	process.exit(">> ERROR: Es wurde kein Einsender angegeben!");
 }
+if(program.quelle) var quelle = program.quelle;
+if(program.routine) con.setRoutine();
+if(program.verbose) con.setVerbose();
 
 
 //Liste an Funktions-Callbacks wird sequenziell abgearbeitet von mainLoop()

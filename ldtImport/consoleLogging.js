@@ -8,6 +8,7 @@ var verbose = false;
 var routine = false;
 function setVerbose(){
 	return new Promise((resolve,reject)=>{
+		routine = false;
 		verbose = true;
 		if(verbose == true){
 		 resolve();
@@ -15,7 +16,6 @@ function setVerbose(){
 			reject()
 		}
 	});
-	x = 1
 }
 function setRoutine(){
 	return new Promise((resolve,reject)=>{
@@ -26,7 +26,6 @@ function setRoutine(){
 			reject()
 		}
 	});
-	x = 1
 }
 // WENN MSG FALSE IST WIRD KEIN ZEITSTEMPEL ERSTELLT
 // CONSOLENAUSGABE KANN ÜBER ALT GESTEUERT WERDEN wenn !msg
