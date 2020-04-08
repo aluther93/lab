@@ -232,7 +232,9 @@ function processQueryResultBefunde(rows){
 					break;
 				default:
 					if(processedResult[type] != null && processedResult[type] != rows[i][type]){
-						con.log(false," UNHANDLED EVENT: " + type + " der Befunde unterscheidet sich!");
+						if(type != "abgerufenAt"){
+							con.log(false," UNHANDLED EVENT: " + type + " der Befunde unterscheidet sich!");
+						}
 						break;
 					}else{
 						processedResult[type] = String(rows[i][type]);

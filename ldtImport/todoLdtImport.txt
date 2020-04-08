@@ -2,15 +2,14 @@
 (?) falls kein Einsender Quelle kombination , selbst anlegen
 (x) AppendBackslash ?!?
 (x) rootCinfig obsolete löschen
+(x) Node module commander
 
 ( ) ldtVersionen unterscheiden sich bezüglich Datumsangabe
 ( ) LdtVersion Richtig exportieren für EInsender
 ( ) Ldt umsortieren damit man vergleichen kann .... alles > LDT1014 handled das Datum anders // 10 ist hier Monat 14 Jahr
 
-( ) Node module commander
-
-
 ( ) CatchBlöcke verwenden : catch() err=> console.error(err) für promises
 
-
 ( ) J|rg Zeichensatz 1 LG939636 Labornummer
+
+
