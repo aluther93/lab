@@ -6,7 +6,7 @@
   "dependencies": {
     "codepage": "^1.14.0",
     "commander": "^5.0.0",
-    "knex": "^0.19.5",
+    "knex": "^2.4.0",
     "legacy-encoding": "^3.0.0",
     "mysql": "^2.5.4",
     "query-string": "^6.9.0"
